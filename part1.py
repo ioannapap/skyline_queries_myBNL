@@ -12,12 +12,13 @@ def getINput():
 	args=[]
 	checked=0
 
-	print('--------------------------NBA STATS 2017--------------------------')
+	print('------------------------------NBA STATS 2017------------------------------')
+	print('------------------------------TOK K PLAYERS ------------------------------\n')
 	print('Choose which of the following statCategories you are interested in: ')
 	print('1. Rebounds 	  2. Assists 	 3. Steals  	4. Blocks 	  5. Points')
 
 	while checked==0 or len(args)!=2:
-		args=input('Give the numbers with comma in [ ]	 and then the number of the Top-k players you are looking for:\n').split(' ')
+		args=input('\nGive the numbers with comma in [ ] and then, the number of the Top-k players you are looking for:\n').split(' ')
 		checked=checkArgs(args)
 
 	return args
@@ -25,7 +26,13 @@ def getINput():
 def checkArgs(args):
 
 	chosenCategories=[]
+
 	#checking chosenCategories
+
+	if args[0][0]!='[' or args[0][len(args[0])-1]!=']':
+		print('\nInsert the chosen categories in [ ]\n')
+		return 0
+
 	for i in args[0]:
 
 		if i.isdigit(): 
@@ -33,17 +40,17 @@ def checkArgs(args):
 			if int(i)>=1 and int(i)<=5:
 				chosenCategories.insert(len(chosenCategories), int(i))
 			else:
-				print('insert number from 1-5.\n')
+				print('\nInsert number from 1-5.\n')
 				return 0 
 
 		elif i=='[' or i==']' or i==',':
 			pass
 		elif i=='-':
-			print('Insert number from 1-5.\n')
+			print('\nInsert number from 1-5.\n')
 			return 0 
 
 		else:
-			print('Insert number from 1-5.\n')
+			print('\nInsert number from 1-5.\n')
 			return 0 
 
 	#checking k
@@ -52,11 +59,11 @@ def checkArgs(args):
 		k=int(args[1])
 
 	except ValueError:
-		print('Insert integer for k.\n')
+		print('\nInsert integer for k.\n')
 		return 0
 
 	if k<=0 or k>595:
-		print( 'All players are 595.\n')
+		print( '\nAll players are 595.\n')
 		return 0
 
 	return 1

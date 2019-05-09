@@ -12,14 +12,13 @@ def getINput():
 	args=[]
 	checked=0
 
-	print('--------------------------NBA STATS 2017--------------------------')
-	print('-------------------------SKYLINE PLAYERS--------------------------')
-	print('------------------------------------------------------------------')
+	print('------------------------------NBA STATS 2017------------------------------')
+	print('-----------------------------SKYLINE PLAYERS------------------------------\n')
 	print('Choose which of the following statCategories you are interested in: ')
 	print('1. Rebounds 	  2. Assists 	 3. Steals  	4. Blocks 	  5. Points')
 
 	while checked==0:
-		args=input('Give the numbers with comma in [ ]:\n')
+		args=input('\nGive the numbers with comma in [ ]:\n')
 		checked=checkArgs(args)
 
 	return args
@@ -27,7 +26,9 @@ def getINput():
 def checkArgs(args):
 
 	chosenCategories=[]
+
 	#checking chosenCategories
+	
 	for i in args:
 	
 		if i.isdigit(): 
