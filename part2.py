@@ -7,8 +7,11 @@ stealStats='2017.STL.csv'
 blockStats='2017_BLK.csv'
 reboundStats='2017_TRB.csv'
 
+
+
 def getINput():
 
+	chosenCategories=[]
 	args=[]
 	checked=0
 
@@ -19,22 +22,22 @@ def getINput():
 
 	while checked==0:
 		args=input('\nGive the numbers with comma in [ ]:\n')
-		checked=checkArgs(args)
+		checked=checkArgs(args, chosenCategories)
 
-	return args
+	return chosenCategories
 
-def checkArgs(args):
 
-	chosenCategories=[]
+
+def checkArgs(args, cat):
 
 	#checking chosenCategories
-	
+
 	for i in args:
-	
+
 		if i.isdigit(): 
 				
 			if int(i)>=1 and int(i)<=5:
-				chosenCategories.insert(len(chosenCategories), int(i))
+				cat.insert(len(cat), int(i))
 			else:
 				print('insert number from 1-5.\n')
 				return 0 
@@ -60,5 +63,4 @@ def checkArgs(args):
 
 if __name__ == "__main__":
 
-	chosenCategories=[]
-	getINput()
+	chosenCategories=getINput()
