@@ -3,7 +3,7 @@ import csv
 allStats='2017_ALL.csv'
 assistStats='2017_AST.csv'
 pointStats='2017_PTS.csv'
-stealStats='2017.STL.csv'
+stealStats='2017_STL.csv'
 blockStats='2017_BLK.csv'
 reboundStats='2017_TRB.csv'
 
@@ -55,8 +55,19 @@ def checkArgs(args, cat):
 	return 1
 
 
+def makeHashMaps(cat):
 
+	optionFiles={0: allStats, 1: reboundStats, 2: assistStats, 3: stealStats, 4: blockStats, 5: pointStats}
+	numOfChoices=len(cat)
+	if numOfChoices<5:
+		leftovers=5-numOfChoices
+		for i in range(leftovers):
+			cat.append(0)
 
+		print(cat)
+	
+	with open(optionFiles[cat[0]], 'r',encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r',encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r',encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r',encoding='UTF-8') as df5:
+		print('y')
 
 
 
