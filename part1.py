@@ -126,12 +126,17 @@ def makeHashMaps(cat, k):
 					maxv1=data1[1]
 					maxv2=data2[1]
 					firstRow=0
-				performance1=normalization(int(data1[1]), maxv1)
-				performance2=normalization(int(data2[1]), maxv2) 
+				performance1=normalization(int(data1[1]), maxv1) #tis grammis p eimai twra
+				performance2=normalization(int(data2[1]), maxv2) #tis grammis p eimai twra
+
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})	
+				
+				currentIds=[data1[0], data2[0]]
+				currentPerformances=[performance1,performance2]
+				hashMapsList=[hashMap1, hashMap2]
+				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
-		
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
 			firstRow=1
@@ -150,7 +155,10 @@ def makeHashMaps(cat, k):
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})
-
+				currentIds=[data1[0], data2[0], data3[0]]
+				currentPerformances=[performance1,performance2, performance3]
+				hashMapsList=[hashMap1, hashMap2, hashMap3]
+				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
 		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
@@ -174,7 +182,10 @@ def makeHashMaps(cat, k):
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})				
 				hashMap4.update({int(data4[0]): performance4})
-
+				currentIds=[data1[0], data2[0], data3[0], data4[0]]
+				currentPerformances=[performance1,performance2, performance3, performance4]
+				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
+				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
@@ -202,7 +213,11 @@ def makeHashMaps(cat, k):
 				hashMap3.update({int(data3[0]): performance3})				
 				hashMap4.update({int(data4[0]): performance4})
 				hashMap5.update({int(data5[0]): performance5})
-	
+				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
+				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
+				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
+				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
+
 		'''
 		with open(results, 'w', encoding='UTF-8') as record:
 
@@ -214,7 +229,37 @@ def makeHashMaps(cat, k):
 def normalization(rowValue, maxv):
 	return rowValue/maxv
 
+def nra(currentIds, currentPerformances, hashMapsList, numOfChoices):
+	#na valeis maxflowerbound kai maxfub
+	if numOfChoices==2:
 
+		for i in hashMapsList[0]:
+			if i not in hashMapsList[1]:
+				f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
+				f1Lb=hashMapsList[0].get(i)			
+			else:
+				f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+
+		for j in hashMapsList[1]:
+			if j not in hashMapsList[0]:
+				f2Ub=hashMapsList[1].get(j)+currentPerformances[0]
+				f2Lb=hashMapsList[1].get(j)	
+			else:
+				f2Ub==hashMapsList[1].get(j)+hashMapsList[0].get(j)
+				f2Lb=hashMapsList[1].get(j)+hashMapsList[0].get(j)
+
+	elif numOfChoices==3:
+
+
+	elif numOfChoices==4:
+
+
+
+	elif numOfChoices==5:
+	'''
+	gia kathe stoixeio sto hashmap ksanaupologizeis pali ta bounds
+	'''
 if __name__ == "__main__":
 	
 	inputs=getINput()
