@@ -76,57 +76,143 @@ def checkArgs(args, cat):
 
 
 
-def makeHashMaps(cat):
+def makeHashMaps(cat, k):
+
+	hashMap={} #ids and names only
+	hashMap1={}
+	hashMap2={}
+	hashMap3={}
+	hashMap4={}
+	hashMap5={}
+
+
+	with open(allStats, 'r', encoding='UTF-8') as df:
+		
+		row=df.readline() #to skip labels
+
+		for row in df:						
+			data=row.split(',') 
+			data[-1] = data[-1].strip() #remove \n
+			hashMap.update({int(data[0]): [data[1], data[2], data[3], data[4], data[5], data[6], data[7]]})
 
 	optionFiles={0: allStats, 1: reboundStats, 2: assistStats, 3: stealStats, 4: blockStats, 5: pointStats}
 	numOfChoices=len(cat)
+
 	if numOfChoices<5:
 		leftovers=5-numOfChoices
 		for i in range(leftovers):
 			cat.append(0)
 
-		print(cat)
 	
-	with open(optionFiles[cat[0]], 'r',encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r',encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r',encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r',encoding='UTF-8') as df5:
-		'''
-		for row in df1:
-			data1=row.split(',')
-			hashMap1.append({ })
+	with open(optionFiles[cat[0]], 'r', encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r', encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r', encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r', encoding='UTF-8') as df5:
+		
+		if numOfChoices==1: #cat[0] 
 
-		if numOfChoices>=2:
-			for row in df2:
-				data2=row.split(',') 
-				hashMap2.append({ })	
+			firstRow=1
+			for row in df1:
+				data1=row.split(',')
+				#the top ks are the first k 
+				topKPlayer=hashMap.get(int(data1[0]))
+				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1])]
 
 
-		if numOfChoices>=3:
-			for row in df3:
+		elif numOfChoices==2: #cat[0] cat[1]
+
+			firstRow=1
+			for row in zip(dif1,df2):
+				data1=row.split(',')
+				data2=row.split(',')
+				if firstRow==1:
+					maxv1=data1[1]
+					maxv2=data2[1]
+					firstRow=0
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				hashMap1.update({int(data1[0]): performance1})
+				hashMap2.update({int(data2[0]): performance2})	
+
+		
+		elif numOfChoices==3: #cat[0] cat[1] cat[2]
+
+			firstRow=1
+			for row in zip(df1,df2,df3):
+				data1=row.split(',')
+				data2=row.split(',')
 				data3=row.split(',') 
-				hashMap3.append({ })
+				if firstRow==1:
+					maxv1=data1[1]
+					maxv2=data2[1]
+					maxv3=data3[1]
+					firstRow=0
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				performance3=normalization(int(data3[1]), maxv3)
+				hashMap1.update({int(data1[0]): performance1})
+				hashMap2.update({int(data2[0]): performance2})
+				hashMap3.update({int(data3[0]): performance3})
 
 
+		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
-		if numOfChoices>=4:
-			for row in df4:
-				data4=row.split(',') 
-				hashMap4.append({ })
+			firstRow=1
+			for row in zip(df1,df2,df3,df4):
+				data1=row.split(',')
+				data2=row.split(',')
+				data3=row.split(',') 
+				data4=row.split(',')
+				if firstRow==1:
+					maxv1=data1[1]
+					maxv2=data2[1]
+					maxv3=data3[1]
+					maxv4=data4[1]
+					firstRow=0
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				performance3=normalization(int(data3[1]), maxv3)	
+				performance4=normalization(int(data4[1]), maxv4)
+				hashMap1.update({int(data1[0]): performance1})
+				hashMap2.update({int(data2[0]): performance2})
+				hashMap3.update({int(data3[0]): performance3})				
+				hashMap4.update({int(data4[0]): performance4})
 
-		if numOfChoices==5:
-			for row in df5:
-				data5=row.split(',') 
-				hashMap5.append({ })
+
+		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
+
+			firstRow=1
+			for row in zip(df1,df2,df3,df4,df5):
+				data1=row.split(',')
+				data2=row.split(',')
+				data3=row.split(',') 
+				data4=row.split(',')
+				data5=row.split(',')
+				if firstRow==1:
+					maxv1=data1[1]
+					maxv2=data2[1]
+					maxv3=data3[1]
+					maxv4=data4[1]
+					maxv5=data5[1]
+					firstRow=0
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				performance3=normalization(int(data3[1]), maxv3)	
+				performance4=normalization(int(data4[1]), maxv4)
+				performance5=normalization(int(data5[1]), maxv5)
+				hashMap1.update({int(data1[0]): performance1})
+				hashMap2.update({int(data2[0]): performance2})
+				hashMap3.update({int(data3[0]): performance3})				
+				hashMap4.update({int(data4[0]): performance4})
+				hashMap5.update({int(data5[0]): performance5})
 	
-	
+		'''
 		with open(results, 'w', encoding='UTF-8') as record:
 
-		tsv_writer = csv.writer(record, delimiter='\t')	
-		tsv_writer.writerow(['titleId', 'primaryTitle','title','regions'])
+		csv_writer = csv.writer(record, delimiter=',')	
+		csv_writer.writerow(['titleId', 'primaryTitle','title','regions'])
 		
 		'''
 
-
-
-
+def normalization(rowValue, maxv):
+	return rowValue/maxv
 
 
 if __name__ == "__main__":
@@ -134,5 +220,15 @@ if __name__ == "__main__":
 	inputs=getINput()
 	chosenCategories=inputs[0]
 	k=inputs[1]
-	makeHashMaps(chosenCategories)
-	print(k)
+	print('k', k)
+	counter=0
+	with open('topks.csv', 'w', encoding='UTF-8') as rp1: 
+		csv_writer = csv.writer(rp1, delimiter=',')
+		for topks in makeHashMaps(chosenCategories, k):
+			if counter<k:
+				csv_writer.writerow(topks)
+				print(topks)
+				counter+=1
+			else:
+				break
+	 
