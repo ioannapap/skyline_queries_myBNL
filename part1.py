@@ -119,7 +119,7 @@ def makeHashMaps(cat, k):
 		elif numOfChoices==2: #cat[0] cat[1]
 
 			firstRow=1
-			for row in zip(dif1,df2):
+			for row in zip(df1,df2):
 				data1=row.split(',')
 				data2=row.split(',')
 				if firstRow==1:
