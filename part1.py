@@ -577,6 +577,64 @@ def lara(currentIds, currentPerformances, hashMapsList, numOfChoices):
 			else:
 				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+
+
+
+		for i in hashMapsList[3]:
+
+			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[3].get(i)		
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
+				f4Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+
+
+			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
+				f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
+				f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
+				f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+			elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			else:
+				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
 	'''
 	gia kathe stoixeio sto hashmap ksanaupologizeis pali ta bounds
 	'''
