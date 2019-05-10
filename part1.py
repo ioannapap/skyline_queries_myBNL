@@ -68,7 +68,7 @@ def checkArgs(args, cat):
 		print('Insert integer for k.\n')
 		return 0
 
-	if k<=0 or k>595:
+	if k<0 or k>595:
 		print( '\nAll players are 595.\n')
 		return 0
 
@@ -131,11 +131,11 @@ def makeHashMaps(cat, k):
 
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})	
-				
+				T=performance1+performance2
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1,performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
@@ -156,9 +156,10 @@ def makeHashMaps(cat, k):
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})
 				currentIds=[data1[0], data2[0], data3[0]]
+				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
 		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
@@ -182,10 +183,11 @@ def makeHashMaps(cat, k):
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})				
 				hashMap4.update({int(data4[0]): performance4})
+				T=performance1+performance2+performance3+performance4
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
@@ -213,10 +215,11 @@ def makeHashMaps(cat, k):
 				hashMap3.update({int(data3[0]): performance3})				
 				hashMap4.update({int(data4[0]): performance4})
 				hashMap5.update({int(data5[0]): performance5})
+				T=performance1+performance2+performance3+performance4+performance5
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				nra(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
 
 		'''
 		with open(results, 'w', encoding='UTF-8') as record:
@@ -229,31 +232,177 @@ def makeHashMaps(cat, k):
 def normalization(rowValue, maxv):
 	return rowValue/maxv
 
-def nra(currentIds, currentPerformances, hashMapsList, numOfChoices):
+def lara(currentIds, currentPerformances, hashMapsList, numOfChoices):
 	#na valeis maxflowerbound kai maxfub
 	if numOfChoices==2:
 
 		for i in hashMapsList[0]:
 			if i not in hashMapsList[1]:
-				f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
+				#f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
 				f1Lb=hashMapsList[0].get(i)			
 			else:
-				f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+				#f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
 		for j in hashMapsList[1]:
 			if j not in hashMapsList[0]:
-				f2Ub=hashMapsList[1].get(j)+currentPerformances[0]
+				#f2Ub=hashMapsList[1].get(j)+currentPerformances[0]
 				f2Lb=hashMapsList[1].get(j)	
 			else:
-				f2Ub==hashMapsList[1].get(j)+hashMapsList[0].get(j)
+				#f2Ub==hashMapsList[1].get(j)+hashMapsList[0].get(j)
 				f2Lb=hashMapsList[1].get(j)+hashMapsList[0].get(j)
 
 	elif numOfChoices==3:
 
+		for i in hashMapsList[0]:
+
+			if i not in hashMapsList[1] and i not in hashMapsList[2]:
+				f1Lb=hashMapsList[0].get(i)		
+
+			elif i in hashMapsList[1] and i not in hashMapsList[2]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+
+			elif i not in hashMapsList[1] and i in hashMapsList[2]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+
+			else:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+
+		for i in hashMapsList[1]:
+
+			if i not in hashMapsList[0] and i not in hashMapsList[2]:
+				f2Lb=hashMapsList[1].get(i)		
+
+			elif i in hashMapsList[0] and i not in hashMapsList[2]:
+				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[2]:
+				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			else:
+				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+		for i in hashMapsList[2]:
+
+			if i not in hashMapsList[0] and i not in hashMapsList[1]:
+				f3Lb=hashMapsList[2].get(i)		
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1]:
+				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1]:
+				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			else:
+				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
 
 	elif numOfChoices==4:
 
+		for i in hashMapsList[0]:
+
+			if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)		
+
+			elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+
+			elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+
+			elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			else:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+		for i in hashMapsList[1]:
+
+			if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[1].get(i)		
+
+			elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			else:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+		for i in hashMapsList[2]:
+
+			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[2].get(i)		
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			else:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+		for i in hashMapsList[3]:
+
+			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
+				f1Lb=hashMapsList[3].get(i)		
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
+				f1Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+
+			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2]:
+				f1Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+			else:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
 
 	elif numOfChoices==5:
@@ -270,7 +419,10 @@ if __name__ == "__main__":
 	with open('topks.csv', 'w', encoding='UTF-8') as rp1: 
 		csv_writer = csv.writer(rp1, delimiter=',')
 		for topks in makeHashMaps(chosenCategories, k):
-			if counter<k:
+			if k==0:
+				print('No results. Terminate.')
+				break
+			elif counter<k:
 				csv_writer.writerow(topks)
 				print(topks)
 				counter+=1
