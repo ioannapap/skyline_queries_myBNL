@@ -425,6 +425,7 @@ def lara(currentIds, currentPerformances, hashMapsList, numOfChoices):
 				f1Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
 
 
+
 			elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
@@ -443,6 +444,20 @@ def lara(currentIds, currentPerformances, hashMapsList, numOfChoices):
 
 			elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 				f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+
+
+			elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+			elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+			elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+
+			elif i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
 			else:
 				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
