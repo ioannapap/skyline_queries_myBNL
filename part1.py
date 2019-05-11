@@ -106,6 +106,9 @@ def makeHashMaps(cat, k):
 	
 	with open(optionFiles[cat[0]], 'r', encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r', encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r', encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r', encoding='UTF-8') as df5:
 		
+		growningPhase=1
+
+		
 		if numOfChoices==1: #cat[0] 
 
 			firstRow=1
@@ -119,6 +122,8 @@ def makeHashMaps(cat, k):
 		elif numOfChoices==2: #cat[0] cat[1]
 
 			firstRow=1
+			t=0 #the k-st highest score in list Wk
+			W=[]
 			for row in zip(df1,df2):
 				data1=row.split(',')
 				data2=row.split(',')
@@ -128,18 +133,19 @@ def makeHashMaps(cat, k):
 					firstRow=0
 				performance1=normalization(int(data1[1]), maxv1) #tis grammis p eimai twra
 				performance2=normalization(int(data2[1]), maxv2) #tis grammis p eimai twra
-
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})	
 				T=performance1+performance2
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1,performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
 
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
 			firstRow=1
+			t=0 #the k-st highest score in list Wk
+			W=[]
 			for row in zip(df1,df2,df3):
 				data1=row.split(',')
 				data2=row.split(',')
@@ -159,11 +165,13 @@ def makeHashMaps(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList,t, T, W, numOfChoices)
 
 		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
 			firstRow=1
+			t=0 #the k-st highest score in list Wk
+			W=[]
 			for row in zip(df1,df2,df3,df4):
 				data1=row.split(',')
 				data2=row.split(',')
@@ -187,11 +195,13 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
 
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
 			firstRow=1
+			t=0 #the k-st highest score in list Wk
+			W=[]
 			for row in zip(df1,df2,df3,df4,df5):
 				data1=row.split(',')
 				data2=row.split(',')
@@ -219,7 +229,7 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				lara(currentIds, currentPerformances, hashMapsList, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
 
 		'''
 		with open(results, 'w', encoding='UTF-8') as record:
@@ -232,467 +242,451 @@ def makeHashMaps(cat, k):
 def normalization(rowValue, maxv):
 	return rowValue/maxv
 
-def lara(currentIds, currentPerformances, hashMapsList, numOfChoices):
-	#na valeis maxflowerbound kai maxfub
-	if numOfChoices==2:
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
+	
 
-		for i in hashMapsList[0]:
-			if i not in hashMapsList[1]:
-				#f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
-				f1Lb=hashMapsList[0].get(i)			
-			else:
-				#f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+	#growingPhase
+	if t<T:
 
-		for j in hashMapsList[1]:
-			if j not in hashMapsList[0]:
-				#f2Ub=hashMapsList[1].get(j)+currentPerformances[0]
-				f2Lb=hashMapsList[1].get(j)	
-			else:
-				#f2Ub==hashMapsList[1].get(j)+hashMapsList[0].get(j)
-				f2Lb=hashMapsList[1].get(j)+hashMapsList[0].get(j)
+		if numOfChoices==2:
 
-	elif numOfChoices==3:
+			#update lower bounds
+			for i in hashMapsList[0]:
+				if i not in hashMapsList[1]:
+					#f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
+					f1Lb=hashMapsList[0].get(i)			
+				else:
+					#f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-		for i in hashMapsList[0]:
+			for j in hashMapsList[1]:
+				if j not in hashMapsList[0]:
+					#f2Ub=hashMapsList[1].get(j)+currentPerformances[0]
+					f2Lb=hashMapsList[1].get(j)	
+				else:
+					#f2Ub==hashMapsList[1].get(j)+hashMapsList[0].get(j)
+					f2Lb=hashMapsList[1].get(j)+hashMapsList[0].get(j)
 
-			if i not in hashMapsList[1] and i not in hashMapsList[2]:
-				f1Lb=hashMapsList[0].get(i)		
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
-			else:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+		elif numOfChoices==3:
 
+			#update lower bounds
+			for i in hashMapsList[0]:
+				if i not in hashMapsList[1] and i not in hashMapsList[2]:
+					f1Lb=hashMapsList[0].get(i)		
 
-		for i in hashMapsList[1]:
+				elif i in hashMapsList[1] and i not in hashMapsList[2]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[2]:
-				f2Lb=hashMapsList[1].get(i)		
+				elif i not in hashMapsList[1] and i in hashMapsList[2]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+				else:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+			for i in hashMapsList[1]:
+				if i not in hashMapsList[0] and i not in hashMapsList[2]:
+					f2Lb=hashMapsList[1].get(i)		
 
-			else:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[2]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-		for i in hashMapsList[2]:
+				elif i not in hashMapsList[0] and i in hashMapsList[2]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[1]:
-				f3Lb=hashMapsList[2].get(i)		
+				else:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+			for i in hashMapsList[2]:
+				if i not in hashMapsList[0] and i not in hashMapsList[1]:
+					f3Lb=hashMapsList[2].get(i)		
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
-			else:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				else:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-	elif numOfChoices==4:
 
-		for i in hashMapsList[0]:
 
-			if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)		
+		elif numOfChoices==4:
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+		#update lower bounds
+			for i in hashMapsList[0]:
+				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)		
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+				elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			else:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-		for i in hashMapsList[1]:
+				else:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f2Lb=hashMapsList[1].get(i)		
+			for i in hashMapsList[1]:
+				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f2Lb=hashMapsList[1].get(i)		
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			else:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				else:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-		for i in hashMapsList[2]:
+			for i in hashMapsList[2]:
+				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
+					f3Lb=hashMapsList[2].get(i)		
 
-			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
-				f3Lb=hashMapsList[2].get(i)		
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
+					f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
-				f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				else:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			else:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+			for i in hashMapsList[3]:
+				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
+					f4Lb=hashMapsList[3].get(i)		
 
-		for i in hashMapsList[3]:
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
-				f4Lb=hashMapsList[3].get(i)		
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
+					f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
+					f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
-				f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
-				f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2]:
+					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				else:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2]:
-				f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			else:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
+		elif numOfChoices==5:
 
-	elif numOfChoices==5:
+			#update lower bounds
+			for i in hashMapsList[0]:
+				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)		
 
-		for i in hashMapsList[0]:
+				elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)		
+				elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
+				elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
+				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+				elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
+				elif i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				else:
+					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+			for i in hashMapsList[1]:
+				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)		
 
-			elif i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			else:
-				f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
+				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[4].get(i)
 
 
+				elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-		for i in hashMapsList[1]:
+				elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)		
+				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
 
+				elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
+				else:
+					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+			for i in hashMapsList[2]:
+				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[2].get(i)		
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
-				f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f3Lb=hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			else:
-				f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
 
-		for i in hashMapsList[2]:
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[2].get(i)		
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
+					f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
+					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f3Lb=hashMapsList[2].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+				else:
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+			for i in hashMapsList[3]:
+				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[3].get(i)		
 
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
-				f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
+					f4Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
 
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
-				f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			else:
-				f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
+					f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
+					f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
 
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
+					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-		for i in hashMapsList[3]:
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[3].get(i)		
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				else:
+					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
-				f4Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
+			for i in hashMapsList[4]:
+				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[4].get(i)		
 
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
 
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[1].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f5Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
-				f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
-				f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
+					f5Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
-				f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
+					f5Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
+					f5Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-			else:
-				f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
 
-
-		for i in hashMapsList[4]:
-
-			if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[4].get(i)		
-
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
-
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[1].get(i)+hashMapsList[4].get(i)
-
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[2].get(i)+hashMapsList[4].get(i)
-
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f5Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-
-
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
-
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
-
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
-
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
-				f5Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-			elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
-				f5Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-
-
-			elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
-				f5Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-			elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-			elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
-
-			else:
-				f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
-
+				else:
+					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+	#shrinkingPhase
+	else:
 
 
 if __name__ == "__main__":
