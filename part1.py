@@ -86,10 +86,10 @@ def topKEvaluation(cat, k):
 	hashMap4={}
 	hashMap5={}
 	upperBoundsDict={}
-	canYield=0
-	numOfAccesses=0 #num of lines read from files
+	W=[]
 	t=0 #the k-st highest score in list Wk
-	W=[]		
+	canYield=0
+	numOfAccesses=0 #num of lines read from files	
 
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
@@ -136,7 +136,7 @@ def topKEvaluation(cat, k):
 				hashMap2.update({int(data2[0]): performance2})	
 				T=performance1+performance2
 				currentIds=[data1[0], data2[0]]
-				currentPerformances=[performance1,performance2]
+				currentPerformances=[performance1, performance2]
 				hashMapsList=[hashMap1, hashMap2]
 				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
 
@@ -1194,15 +1194,124 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
-
-	
-	
+		return 0
 	#shrinkingPhase
 	else:
+		#xreiazomai sort aragee?
+		upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
+		print('sorted upperBoundsDictK: ', upperBoundsDictK)
+		upperBoundsDict=dict(upperBoundsDictK)
+		print('upperBoundsDict: ', upperBoundsDict)
+	
+		if t<list(upperBoundsDict.items()[0][0]):
+		
+			if numOfChoices==2:
+				
+				numOfAccesses+=1
+
+				if currentIds[0] in hashMapsList[1]:
+					newUb=hashMapsList[1].get(currentIds[0])+currentPerformances[0]
+					upperBoundsDict.update(currentIds[0]=newUb)
+					upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
+					upperBoundsDict=dict(upperBoundsDictK)
+				
+				if t>=list(upperBoundsDict.items()[0][0]):
+					return 1
+
+				numOfAccesses+=1
+
+				if currentIds[1] in hashMapsList[0]:
+					newUb=hashMapsList[0].get(currentIds[1])+currentPerformances[1]
+					upperBoundsDict.update(currentIds[1]=newUb)
+					upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
+					upperBoundsDict=dict(upperBoundsDictK)
+
+				if t>=list(upperBoundsDict.items()[0][0]):
+					return 1
+
+
+			elif numOfChoices==3:
+
+				numOfAccesses+=1
+
+				if currentIds[0] in hashMapsList[1] and currentIds[0] not in hashMapsList[2]:
+					newUb=hashMapsList[1].get(currentIds[0])+hashMapsList[2].get(hashMapsList[2].keys()[-2])+currentPerformances[0] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[0]=newUb)
+
+				elif currentIds[0] not in hashMapsList[1] and currentIds[0] in hashMapsList[2]:
+					newUb=hashMapsList[2].get(currentIds[0])+hashMapsList[1].get(hashMapsList[1].keys()[-2])+currentPerformances[0] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[0]=newUb)
+
+				elif currentIds[0] in hashMapsList[1] and currentIds[0] in hashMapsList[2]:
+					newUb=hashMapsList[1].get(currentIds[0])_hashMapsList[2].get(currentIds[0])+currentPerformances[0] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[0]=newUb)
+
+				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
+				upperBoundsDict=dict(upperBoundsDictK)
+				if t>=list(upperBoundsDict.items()[0][0]):
+					return 1
+
+
+				numOfAccesses+=1
+
+
+				if currentIds[1] in hashMapsList[0] and currentIds[1] not in hashMapsList[2]:
+					newUb=hashMapsList[0].get(currentIds[1])+hashMapsList[2].get(hashMapsList[2].keys()[-2])+currentPerformances[1]
+					upperBoundsDict.update(currentIds[1]=newUb)
+
+				elif currentIds[1] not in hashMapsList[0] and currentIds[1] in hashMapsList[2]:
+					newUb=hashMapsList[2].get(currentIds[1])+hashMapsList[0].get(hashMapsList[0].keys()[-2])+currentPerformances[1] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[1]=newUb)
+
+				elif currentIds[1] in hashMapsList[0] and currentIds[1] in hashMapsList[2]:
+					newUb=hashMapsList[0].get(currentIds[1])+hashMapsList[2].get(currentIds[1])+currentPerformances[1] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[1]=newUb)
+
+				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
+				upperBoundsDict=dict(upperBoundsDictK)
+				if t>=list(upperBoundsDict.items()[0][0]):
+					return 1
+
+
+				numOfAccesses+=1
+
+
+				if currentIds[2] in hashMapsList[0] and currentIds[2] not in hashMapsList[1]:
+					newUb=hashMapsList[0].get(currentIds[2])+hashMapsList[1].get(hashMapsList[1].keys()[-2])+currentPerformances[2]
+					upperBoundsDict.update(currentIds[2]=newUb)
+
+				elif currentIds[2] not in hashMapsList[0] and currentIds[2] in hashMapsList[1]:
+					newUb=hashMapsList[1].get(currentIds[2])+hashMapsList[0].get(hashMapsList[0].keys()[-2])+currentPerformances[2] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[2]=newUb)
+
+				elif currentIds[2] in hashMapsList[0] and currentIds[2] in hashMapsList[1]:
+					newUb=hashMapsList[0].get(currentIds[2])+hashMapsList[1].get(currentIds[2])+currentPerformances[2] #-2 wste na parei to prwteleytaio(giati diavasa to new sti praksi aas min to exw anoiksei akomi)
+					upperBoundsDict.update(currentIds[2]=newUb)
+
+				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
+				upperBoundsDict=dict(upperBoundsDictK)
+				if t>=list(upperBoundsDict.items()[0][0]):
+					return 1
 
 
 
-if __name__ == "__main__":
+
+			elif numOfChoices==4:
+				numOfAccesses+=1
+
+
+
+
+			elif numOfChoices==5:
+				numOfAccesses+=1
+
+		else:
+
+			return 1
+
+
+
+if __name__ == '__main__':
 	
 	inputs=getINput()
 	chosenCategories=inputs[0]
