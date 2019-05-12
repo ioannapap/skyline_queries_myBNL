@@ -77,7 +77,7 @@ def checkArgs(args, cat):
 
 
 
-def makeHashMaps(cat, k):
+def topKEvaluation(cat, k):
 
 	hashMap={} #ids and names only
 	hashMap1={}
@@ -85,7 +85,11 @@ def makeHashMaps(cat, k):
 	hashMap3={}
 	hashMap4={}
 	hashMap5={}
+	upperBoundsDict={}
 	canYield=0
+	numOfAccesses=0 #num of lines read from files
+	t=0 #the k-st highest score in list Wk
+	W=[]		
 
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
@@ -108,22 +112,17 @@ def makeHashMaps(cat, k):
 	with open(optionFiles[cat[0]], 'r', encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r', encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r', encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r', encoding='UTF-8') as df5:
 		
 		if numOfChoices==1: #cat[0] 
-
-			firstRow=1
+	
 			for row in df1:
+				numOfAccesses+=1
 				data1=row.split(',')
-				#the top ks are the first k 
 				topKPlayer=hashMap.get(int(data1[0]))
-				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1])]
+				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), numOfAccesses]
 
 
-		elif numOfChoices==2: #cat[0] cat[1]
+		elif numOfChoices==2: #cat[0] cat[1]	
 
-			firstRow=1
-			t=0 #the k-st highest score in list Wk
-			W=[]
 			for row in zip(df1,df2):
-				
 				data1,data2=fixData(row, numOfChoices)
 	
 				if firstRow==1:
@@ -144,16 +143,13 @@ def makeHashMaps(cat, k):
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
-						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1])]
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
 				#proswrino to break
 				break
+
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
-			firstRow=1
-			t=0 #the k-st highest score in list Wk
-			W=[]
 			for row in zip(df1,df2,df3):
-
 				data1,data2, data3=fixData(row, numOfChoices)
 
 				if firstRow==1:
@@ -177,15 +173,11 @@ def makeHashMaps(cat, k):
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
-						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1])]
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
 
 		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
-			firstRow=1
-			t=0 #the k-st highest score in list Wk
-			W=[]
 			for row in zip(df1,df2,df3,df4):
-
 				data1,data2, data3, data4=fixData(row, numOfChoices)
 
 				if firstRow==1:
@@ -212,16 +204,11 @@ def makeHashMaps(cat, k):
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
-						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1])]
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), numOfAccesses]
 
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
-			firstRow=1
-			t=0 #the k-st highest score in list Wk
-			W=[]
-
 			for row in zip(df1,df2,df3,df4,df5):
-
 				data1,data2, data3, data4=fixData(row, numOfChoices)
 
 				if firstRow==1:
@@ -251,7 +238,7 @@ def makeHashMaps(cat, k):
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
-						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1])]
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
 		'''
 		with open(results, 'w', encoding='UTF-8') as record:
 
@@ -358,13 +345,13 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList, numOfChoices):
 	
 	#growingPhase
 	if t<T:
 
 		if numOfChoices==2:
-
+			numOfAccesses+=2
 			#update lower bounds
 			for i in hashMapsList[0]:
 
@@ -429,7 +416,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 						t=W[0][1]
 		'''
 		elif numOfChoices==3:
-
+			numOfAccesses+=3
 			#update lower bounds
 			for i in hashMapsList[0]:
 
@@ -480,8 +467,8 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 
 		elif numOfChoices==4:
-
-		#update lower bounds
+			numOfAccesses+=4
+			#update lower bounds
 			for i in hashMapsList[0]:
 
 				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
@@ -592,7 +579,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 
 		elif numOfChoices==5:
-
+			numOfAccesses+=5
 			#update lower bounds
 			for i in hashMapsList[0]:
 
@@ -879,14 +866,16 @@ if __name__ == "__main__":
 	counter=0
 	with open('topks.csv', 'w', encoding='UTF-8') as rp1: 
 		csv_writer = csv.writer(rp1, delimiter=',')
-		for topks in makeHashMaps(chosenCategories, k):
+		for topks in topKEvaluation(chosenCategories, k):
 			if k==0:
-				print('No results. Terminate.')
+				print('No results. 0 num of numOfAccesses. Terminate.')
 				break
 			elif counter<k:
-				csv_writer.writerow(topks)
-				print(topks)
+				csv_writer.writerow(topks[:-1])
+				print(topks[:-1])
 				counter+=1
 			else:
+				csv_writer.writerow(topks[-1])
+				print('numOfAccesses', topks[:-1])
 				break
 	 
