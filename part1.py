@@ -1,5 +1,4 @@
 import csv
-from operator import itemgetter
 
 allStats='2017_ALL.csv'
 assistStats='2017_AST.csv'
@@ -362,7 +361,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 				
-				upperBoundsDict.update(i=f1Ub)
+				upperBoundsDict[i]=f1Ub
 			
 				if f1Lb>t:
 					found=0
@@ -399,11 +398,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f2Lb=hashMapsList[1].get(i)	
 					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]
 					
-				else:
+				elif i in hashMapsList[0]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[0].get(i)
-					f2Ub==hashMapsList[1].get(i)+hashMapsList[0].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[0].get(i)
 
-				upperBoundsDict.update(i=f2Ub)
+				upperBoundsDict[i]=f2Ub
 
 				if f2Lb>t:
 					found=0
@@ -448,11 +447,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]
 
-				else:
+				elif i in hashMapsList[1] and i in hashMapsList[2]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				upperBoundsDict.update(i=f1Ub)
+				upperBoundsDict[i]=f1Ub
 
 				if f1Lb>t:
 					found=0
@@ -489,11 +488,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f2Ub==hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[2]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f2Ub==hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				upperBoundsDict.update(i=f2Ub)
+				upperBoundsDict[f2Ub]=i
 				
 				if f2Lb>t:
 					found=0
@@ -530,11 +529,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]	
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[1]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)	
 
-				upperBoundsDict.update(i=f3Ub)
+				upperBoundsDict[i]=f3Ub
 
 				if f3Lb>t:
 					found=0
@@ -592,11 +591,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]
 
-				else:
+				elif i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				upperBoundsDict.update(i=f1Ub)
+				upperBoundsDict[i]=f1Ub
 			
 				if f1Lb>t:
 					found=0
@@ -650,11 +649,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				upperBoundsDict.update(i=f2Ub)
+				upperBoundsDict[i]=f2Ub
 
 				if f2Lb>t:
 					found=0
@@ -708,11 +707,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				upperBoundsDict.update(i=f3Ub)
+				upperBoundsDict[i]=f3Ub
 
 				if f3Lb>t:
 					found=0
@@ -766,11 +765,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f4Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				upperBoundsDict.update(i=f4Ub)
+				upperBoundsDict[i]=f4Ub
 
 				if f4Lb>t:
 					found=0
@@ -859,11 +858,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
-				else:
+				elif i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				upperBoundsDict.update(i=f1Ub)
+				upperBoundsDict[i]=f1Ub
 
 				if f1Lb>t:
 					found=0
@@ -950,11 +949,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				upperBoundsDict.update(i=f2Ub)
+				upperBoundsDict[i]=f2Ub
 
 				if f2Lb>t:
 					found=0
@@ -1039,11 +1038,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				upperBoundsDict.update(i=f3Ub)
+				upperBoundsDict[i]=f3Ub
 
 				if f3Lb>t:
 					found=0
@@ -1130,11 +1129,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				upperBoundsDict.update(i=f4Ub)
+				upperBoundsDict[i]=f4Ub
 
 				if f4Lb>t:
 					found=0
@@ -1222,11 +1221,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[3]
 
 
-				else:
+				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				upperBoundsDict.update(i=f5Ub)
+				upperBoundsDict[i]=f5Ub
 
 				if f5Lb>t:
 					found=0
@@ -1258,8 +1257,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 	#shrinkingPhase
 	else:
 
-		upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
-		print('sorted upperBoundsDictK: ', upperBoundsDictK)
+		upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 		upperBoundsDict=dict(upperBoundsDictK)
 		print('upperBoundsDict: ', upperBoundsDict)
 	
