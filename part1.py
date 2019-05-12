@@ -1,4 +1,5 @@
 import csv
+from operator import itemgetter
 
 allStats='2017_ALL.csv'
 assistStats='2017_AST.csv'
@@ -1253,14 +1254,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 
 
-
 	#shrinkingPhase
 	else:
 
 		upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 		upperBoundsDict=dict(upperBoundsDictK)
 		print('upperBoundsDict: ', upperBoundsDict)
-	
+		print(list(upperBoundsDict.items()[0][0]))
 		if t<list(upperBoundsDict.items()[0][0]):
 		
 			if numOfChoices==2:
