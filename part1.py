@@ -238,13 +238,6 @@ def topKEvaluation(cat, k):
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
-		'''
-		with open(results, 'w', encoding='UTF-8') as record:
-
-		csv_writer = csv.writer(record, delimiter=',')	
-		csv_writer.writerow(['titleId', 'primaryTitle','title','regions'])
-		
-		'''
 
 
 def normalization(rowValue, maxv):
@@ -1260,8 +1253,8 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 		upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 		upperBoundsDict=dict(upperBoundsDictK)
 		print('upperBoundsDict: ', upperBoundsDict)
-		print(list(upperBoundsDict.items()[0][0]))
-		if t<list(upperBoundsDict.items()[0][0]):
+
+		if t<next(iter(upperBoundsDict.values())): #the first value in upperBoundsDict
 		
 			if numOfChoices==2:
 
@@ -1273,7 +1266,8 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[0]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1286,7 +1280,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[1]]=newUb				
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1308,7 +1302,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[0]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1328,7 +1322,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[1]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1348,7 +1342,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[2]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1380,7 +1374,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[0]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1412,7 +1406,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[1]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1444,7 +1438,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[2]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1475,7 +1469,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[3]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=list(upperBoundsDict.items()[0][0]):
+				if t>=next(iter(upperBoundsDict.values())):
 					return 1
 
 
@@ -1507,6 +1501,6 @@ if __name__ == '__main__':
 				counter+=1
 			else:
 				csv_writer.writerow(topks[-1])
-				print('numOfAccesses', topks[:-1])
+				print('numOfAccesses', topks[-1])
 				break
 	 
