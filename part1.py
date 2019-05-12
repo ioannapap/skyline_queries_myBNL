@@ -138,7 +138,7 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1,performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
 
 				if canYield==1:
 					for ks in W:
@@ -168,7 +168,7 @@ def topKEvaluation(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				canYield=lara(currentIds, currentPerformances, hashMapsList,t, T, W, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
 
 				if canYield==1:
 					for ks in W:
@@ -199,7 +199,7 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
 
 				if canYield==1:
 					for ks in W:
@@ -233,7 +233,7 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
 			
 				if canYield==1:
 					for ks in W:
@@ -345,7 +345,7 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList, numOfChoices):
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices):
 	
 	#growingPhase
 	if t<T:
@@ -356,11 +356,14 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList
 			for i in hashMapsList[0]:
 
 				if i not in hashMapsList[1]:
-					#f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
-					f1Lb=hashMapsList[0].get(i)			
-				else:
-					#f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+
+					f1Lb=hashMapsList[0].get(i)	
+					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]		
+				else:			
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+				
+				upperBoundsDict.update(i=f1Ub)
 			
 				if f1Lb>t:
 					
@@ -389,11 +392,15 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0]:
-					#f2Ub=hashMapsList[1].get(i)+currentPerformances[0]
+
 					f2Lb=hashMapsList[1].get(i)	
+					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]
+					
 				else:
-					#f2Ub==hashMapsList[1].get(i)+hashMapsList[0].get(i)
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[0].get(i)
+					f2Ub==hashMapsList[1].get(i)+hashMapsList[0].get(i)
+
+				upperBoundsDict.update(i=f2Ub)
 
 				if f2Lb>t:
 					if i not in W:
@@ -414,56 +421,122 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList
 						W=Wk
 						print('updated pos W:', W)
 						t=W[0][1]
-		'''
+		
+
 		elif numOfChoices==3:
 			numOfAccesses+=3
 			#update lower bounds
 			for i in hashMapsList[0]:
 
 				if i not in hashMapsList[1] and i not in hashMapsList[2]:
-					f1Lb=hashMapsList[0].get(i)		
+					f1Lb=hashMapsList[0].get(i)
+					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]+currentPerformances[2]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]
 
 				else:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				upperBoundsDict.update(i=f1Ub)
+
+				if f1Lb>t:			
+					if i not in W:
+						W.insert(0, [i, f1Lb])
+						t=W[0][1]			
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f1Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]				
 
 
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[2]:
 					f2Lb=hashMapsList[1].get(i)		
+					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f2Ub==hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub==hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]
 
 				else:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub==hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-
+				upperBoundsDict.update(i=f2Ub)
+				
+				if f2Lb>t:
+					if i not in W:
+						W.insert(0, [i,f2Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f2Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 			for i in hashMapsList[2]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[1]:
-					f3Lb=hashMapsList[2].get(i)		
+					f3Lb=hashMapsList[2].get(i)	
+					f3Ub=hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[1]	
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]	
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]	
 
 				else:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)	
 
+				upperBoundsDict.update(i=f3Ub)
+
+				if f3Lb>t:
+					if i not in W:
+						W.insert(0, [i,f3Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f3Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 		elif numOfChoices==4:
@@ -472,110 +545,218 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList
 			for i in hashMapsList[0]:
 
 				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-					f1Lb=hashMapsList[0].get(i)		
+					f1Lb=hashMapsList[0].get(i)	
+					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]+currentPerformances[2]+currentPerformances[3]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]+currentPerformances[3]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]+currentPerformances[3]
 
 				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[2]
 
 				elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[3]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[2]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]
 
 				else:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+				upperBoundsDict.update(i=f1Ub)
+			
+				if f1Lb>t:
+					if i not in W:
+						W.insert(0, [i,f1Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f1Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-					f2Lb=hashMapsList[1].get(i)		
+					f2Lb=hashMapsList[1].get(i)
+					f2Lb=hashMapsList[1].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]
 
 				else:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+				upperBoundsDict.update(i=f2Ub)
+
+				if f2Lb>t:
+					if i not in W:
+						W.insert(0, [i,f2Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f2Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 			for i in hashMapsList[2]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
 					f3Lb=hashMapsList[2].get(i)		
+					f3Ub=hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
 					f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[1]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]
 
 				else:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+
+				upperBoundsDict.update(i=f3Ub)
+
+				if f3Lb>t:
+					if i not in W:
+						W.insert(0, [i,f3Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f3Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
+
 
 
 			for i in hashMapsList[3]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
 					f4Lb=hashMapsList[3].get(i)		
+					f4Ub=hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
 					f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[1]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2]:
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]
 
 				else:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
+				upperBoundsDict.update(i=f4Ub)
+
+				if f4Lb>t:
+					if i not in W:
+						W.insert(0, [i,f4Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f4Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 		elif numOfChoices==5:
@@ -585,273 +766,437 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsList
 
 				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)		
+					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]+currentPerformances[2]+currentPerformances[3]+currentPerformances[4]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]+currentPerformances[3]+currentPerformances[4]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]+currentPerformances[3]+currentPerformances[4]
 
 				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[2]+currentPerformances[4]
 
 				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
-
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[2]+currentPerformances[3]
 
 				elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[3]+currentPerformances[4]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[2]+currentPerformances[4]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
-
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)+currentPerformances[2]+currentPerformances[3]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[4]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[3]
 
 				elif i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[2]
 
 				elif i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]
 
 				elif i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[2]
 
 				elif i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[3]
 
 				elif i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
 				else:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+				upperBoundsDict.update(i=f1Ub)
+
+				if f1Lb>t:
+					if i not in W:
+						W.insert(0, [i,f1Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f1Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
-					f2Lb=hashMapsList[1].get(i)		
+					f2Lb=hashMapsList[1].get(i)	
+					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]+currentPerformances[4]	
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]+currentPerformances[3]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[3]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[4].get(i)
-
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[3]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[2]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
-
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)+currentPerformances[2]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[2]
 
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i in hashMapsList[3] and in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i in hashMapsList[2] and i not in hashMapsList[3] and in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i in hashMapsList[2] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
 				else:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+				upperBoundsDict.update(i=f2Ub)
+
+				if f2Lb>t:
+					if i not in W:
+						W.insert(0, [i,f2Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f2Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 			for i in hashMapsList[2]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[2].get(i)		
+					f3Ub=hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[3]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+currentPerformances[1]+currentPerformances[3]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]+currentPerformances[3]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[2].get(i)+hashMapsList[4].get(i)
-
+					f3Ub=hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[3]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
-
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f3Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[3] and in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
 				else:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+				upperBoundsDict.update(i=f3Ub)
+
+				if f3Lb>t:
+					if i not in W:
+						W.insert(0, [i,f3Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f3Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
 
 
 			for i in hashMapsList[3]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[3].get(i)		
+					f4Ub=hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[2]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[2]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
 					f4Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f4Ub=hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+currentPerformances[2]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[4]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[2]
 
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[4]:
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f4Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
 					f4Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f4Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[4]:
 					f4Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f4Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[4]
 
 				else:
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+				upperBoundsDict.update(i=f4Ub)
+
+				if f4Lb>t:
+					if i not in W:
+						W.insert(0, [i,f4Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f4Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
+
 
 
 			for i in hashMapsList[4]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
-					f5Lb=hashMapsList[4].get(i)		
+					f5Lb=hashMapsList[4].get(i)	
+					f5Ub=hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[2]+currentPerformances[3]	
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[2]+currentPerformances[3]	
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[1].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[1].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]	
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[3]	
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f5Lb=hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f5Ub=hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]+currentPerformances[2]	
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[4].get(i)+currentPerformances[2]+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[3]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[3]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and i in hashMapsList[3]:
 					f5Lb=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[2]
 
 				elif i not in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f5Lb=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-
+					f5Ub=hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]+currentPerformances[1]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i in hashMapsList[3]:
 					f5Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[0]
 
 				elif i in hashMapsList[0] and i not in hashMapsList[1] and i in hashMapsList[2] and in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[1]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[2] and in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)+currentPerformances[2]
 
 				elif i in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)+currentPerformances[3]
+
 
 				else:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
-		
+					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+
+				upperBoundsDict.update(i=f5Ub)
+
+				if f5Lb>t:
+					if i not in W:
+						W.insert(0, [i,f5Lb])
+						t=W[0][1]
+					else:
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f5Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
+						t=W[0][1]
+
 	
-		'''
+	
 	#shrinkingPhase
 	else:
 
