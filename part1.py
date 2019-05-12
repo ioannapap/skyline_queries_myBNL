@@ -1,4 +1,5 @@
 import csv
+from operator import itemgetter
 
 allStats='2017_ALL.csv'
 assistStats='2017_AST.csv'
@@ -107,7 +108,7 @@ def makeHashMaps(cat, k):
 	with open(optionFiles[cat[0]], 'r', encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r', encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r', encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r', encoding='UTF-8') as df5:
 		
 		growningPhase=1
-
+		pos=0
 		
 		if numOfChoices==1: #cat[0] 
 
@@ -125,12 +126,14 @@ def makeHashMaps(cat, k):
 			t=0 #the k-st highest score in list Wk
 			W=[]
 			for row in zip(df1,df2):
-				data1=row.split(',')
-				data2=row.split(',')
+				
+				data1,data2=fixData(row, numOfChoices)
+	
 				if firstRow==1:
 					maxv1=data1[1]
 					maxv2=data2[1]
 					firstRow=0
+
 				performance1=normalization(int(data1[1]), maxv1) #tis grammis p eimai twra
 				performance2=normalization(int(data2[1]), maxv2) #tis grammis p eimai twra
 				hashMap1.update({int(data1[0]): performance1})
@@ -139,22 +142,23 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1,performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
-
+				lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices)
+		
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
 			firstRow=1
 			t=0 #the k-st highest score in list Wk
 			W=[]
 			for row in zip(df1,df2,df3):
-				data1=row.split(',')
-				data2=row.split(',')
-				data3=row.split(',') 
+
+				data1,data2, data3=fixData(row, numOfChoices)
+
 				if firstRow==1:
 					maxv1=data1[1]
 					maxv2=data2[1]
 					maxv3=data3[1]
 					firstRow=0
+
 				performance1=normalization(int(data1[1]), maxv1)
 				performance2=normalization(int(data2[1]), maxv2) 
 				performance3=normalization(int(data3[1]), maxv3)
@@ -165,7 +169,7 @@ def makeHashMaps(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				lara(currentIds, currentPerformances, hashMapsList,t, T, W, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList,t, T, W, pos, numOfChoices)
 
 		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
@@ -173,16 +177,16 @@ def makeHashMaps(cat, k):
 			t=0 #the k-st highest score in list Wk
 			W=[]
 			for row in zip(df1,df2,df3,df4):
-				data1=row.split(',')
-				data2=row.split(',')
-				data3=row.split(',') 
-				data4=row.split(',')
+
+				data1,data2, data3, data4=fixData(row, numOfChoices)
+
 				if firstRow==1:
 					maxv1=data1[1]
 					maxv2=data2[1]
 					maxv3=data3[1]
 					maxv4=data4[1]
 					firstRow=0
+
 				performance1=normalization(int(data1[1]), maxv1)
 				performance2=normalization(int(data2[1]), maxv2) 
 				performance3=normalization(int(data3[1]), maxv3)	
@@ -195,19 +199,18 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices)
 
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
 			firstRow=1
 			t=0 #the k-st highest score in list Wk
 			W=[]
+
 			for row in zip(df1,df2,df3,df4,df5):
-				data1=row.split(',')
-				data2=row.split(',')
-				data3=row.split(',') 
-				data4=row.split(',')
-				data5=row.split(',')
+
+				data1,data2, data3, data4=fixData(row, numOfChoices)
+
 				if firstRow==1:
 					maxv1=data1[1]
 					maxv2=data2[1]
@@ -215,6 +218,7 @@ def makeHashMaps(cat, k):
 					maxv4=data4[1]
 					maxv5=data5[1]
 					firstRow=0
+					
 				performance1=normalization(int(data1[1]), maxv1)
 				performance2=normalization(int(data2[1]), maxv2) 
 				performance3=normalization(int(data3[1]), maxv3)	
@@ -229,7 +233,7 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+				lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices)
 
 		'''
 		with open(results, 'w', encoding='UTF-8') as record:
@@ -242,7 +246,99 @@ def makeHashMaps(cat, k):
 def normalization(rowValue, maxv):
 	return rowValue/maxv
 
-def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
+def fixData(row, numOfChoices):
+
+	if numOfChoices==2:
+
+		data1=list(row[:1])
+		data1[-1] = data1[-1].strip() 
+		data1=data1[0].split(',')
+		data1=[int(l) for l in data1]
+
+		data2=list(row[1:2])
+		data2[-1] = data2[-1].strip() 
+		data2=data2[0].split(',')
+		data2=[int(l) for l in data2]
+
+		return [data1, data2]
+
+	elif numOfChoices==3:
+
+		data1=list(row[:1])
+		data1[-1] = data1[-1].strip() 
+		data1=data1[0].split(',')
+		data1=[int(l) for l in data1]
+
+		data2=list(row[1:2])
+		data2[-1] = data2[-1].strip() 
+		data2=data2[0].split(',')
+		data2=[int(l) for l in data2]
+
+		data3=list(row[2:3])
+		data3[-1] = data3[-1].strip() 
+		data3=data3[0].split(',')
+		data3=[int(l) for l in data3]
+
+		return [data1, data2, data3]
+
+
+	elif numOfChoices==4:
+
+		data1=list(row[:1])
+		data1[-1] = data1[-1].strip() 
+		data1=data1[0].split(',')
+		data1=[int(l) for l in data1]
+
+		data2=list(row[1:2])
+		data2[-1] = data2[-1].strip() 
+		data2=data2[0].split(',')
+		data2=[int(l) for l in data2]
+
+		data3=list(row[2:3])
+		data3[-1] = data3[-1].strip() 
+		data3=data3[0].split(',')
+		data3=[int(l) for l in data3]
+
+		data4=list(row[3:4])
+		data4[-1] = data4[-1].strip() 
+		data4=data4[0].split(',')
+		data4=[int(l) for l in data4]
+
+
+		return [data1, data2, data3, data4]
+
+
+	elif numOfChoices==5:
+
+		data1=list(row[:1])
+		data1[-1] = data1[-1].strip() 
+		data1=data1[0].split(',')
+		data1=[int(l) for l in data1]
+
+		data2=list(row[1:2])
+		data2[-1] = data2[-1].strip() 
+		data2=data2[0].split(',')
+		data2=[int(l) for l in data2]
+
+		data3=list(row[2:3])
+		data3[-1] = data3[-1].strip() 
+		data3=data3[0].split(',')
+		data3=[int(l) for l in data3]
+
+		data4=list(row[3:4])
+		data4[-1] = data4[-1].strip() 
+		data4=data4[0].split(',')
+		data4=[int(l) for l in data4]
+	
+		data5=list(row[4:5])
+		data5[-1] = data5[-1].strip() 
+		data5=data5[0].split(',')
+		data5=[int(l) for l in data5]
+
+		return [data1, data2, data3, data4, data5]
+
+
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices):
 	
 
 	#growingPhase
@@ -252,21 +348,50 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 			#update lower bounds
 			for i in hashMapsList[0]:
+
 				if i not in hashMapsList[1]:
 					#f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
 					f1Lb=hashMapsList[0].get(i)			
 				else:
 					#f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
+			
+				if f1Lb>t:
+					if i not in W:
+						t=f1Lb
+						W.insert(pos, i)
+						pos+=1
+					else:
+						W.remove(i)
+						W.insert(pos, i)
+						Wk=sorted(W.values(), key=itemgetter(1))
+						W=Wk
+						print(W)
 
-			for j in hashMapsList[1]:
-				if j not in hashMapsList[0]:
-					#f2Ub=hashMapsList[1].get(j)+currentPerformances[0]
-					f2Lb=hashMapsList[1].get(j)	
+			for i in hashMapsList[1]:
+
+				if i not in hashMapsList[0]:
+					#f2Ub=hashMapsList[1].get(i)+currentPerformances[0]
+					f2Lb=hashMapsList[1].get(i)	
 				else:
-					#f2Ub==hashMapsList[1].get(j)+hashMapsList[0].get(j)
-					f2Lb=hashMapsList[1].get(j)+hashMapsList[0].get(j)
+					#f2Ub==hashMapsList[1].get(i)+hashMapsList[0].get(i)
+					f2Lb=hashMapsList[1].get(i)+hashMapsList[0].get(i)
 
+				if f2Lb>t:
+					if i not in W:
+						t=f2Lb
+						W.insert(pos, i)
+						pos+=1
+					else:
+						W.remove(i)
+						W.insert(pos, i)
+						Wk=sorted(W.values(), key=itemgetter(1))
+						W=Wk
+						print(W)
+						#for ks in W:
+							#if hashMapsList[1].get(i)>list(W.items()[ks][0]):
+
+'''
 
 
 
@@ -274,6 +399,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 			#update lower bounds
 			for i in hashMapsList[0]:
+
 				if i not in hashMapsList[1] and i not in hashMapsList[2]:
 					f1Lb=hashMapsList[0].get(i)		
 
@@ -286,7 +412,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 				else:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				if f1Lb>t:
+					t=f1Lb
+					W.insert(pos, i)
+
+
 			for i in hashMapsList[1]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[2]:
 					f2Lb=hashMapsList[1].get(i)		
 
@@ -299,7 +431,12 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 				else:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				if f2Lb>t:
+					t=f2Lb
+					W.insert(pos, i)
+
 			for i in hashMapsList[2]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[1]:
 					f3Lb=hashMapsList[2].get(i)		
 
@@ -312,12 +449,16 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 				else:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
+				if f3Lb>t:
+					t=f3Lb
+					W.insert(pos, i)
 
 
 		elif numOfChoices==4:
 
 		#update lower bounds
 			for i in hashMapsList[0]:
+
 				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f1Lb=hashMapsList[0].get(i)		
 
@@ -342,7 +483,9 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 				else:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
+
 			for i in hashMapsList[1]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f2Lb=hashMapsList[1].get(i)		
 
@@ -367,7 +510,9 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 				else:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
+
 			for i in hashMapsList[2]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3]:
 					f3Lb=hashMapsList[2].get(i)		
 
@@ -392,7 +537,9 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 				else:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
+
 			for i in hashMapsList[3]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
 					f4Lb=hashMapsList[3].get(i)		
 
@@ -423,6 +570,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 			#update lower bounds
 			for i in hashMapsList[0]:
+
 				if i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f1Lb=hashMapsList[0].get(i)		
 
@@ -476,6 +624,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 
 			for i in hashMapsList[1]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f2Lb=hashMapsList[1].get(i)		
 
@@ -529,6 +678,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 
 			for i in hashMapsList[2]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[2].get(i)		
 
@@ -582,6 +732,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 
 			for i in hashMapsList[3]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[4]:
 					f4Lb=hashMapsList[3].get(i)		
 
@@ -635,6 +786,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 
 
 			for i in hashMapsList[4]:
+
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f5Lb=hashMapsList[4].get(i)		
 
@@ -687,7 +839,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 	#shrinkingPhase
 	else:
-
+	'''
 
 if __name__ == "__main__":
 	
