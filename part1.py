@@ -89,7 +89,8 @@ def topKEvaluation(cat, k):
 	W=[]
 	t=0 #the k-st highest score in list Wk
 	canYield=0
-	numOfAccesses=0 #num of lines read from files	
+	numOfAccesses=0 #num of lines read from files
+	firstRow=1	
 
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
@@ -138,7 +139,7 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1, performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
 
 				if canYield==1:
 					for ks in W:
@@ -168,7 +169,7 @@ def topKEvaluation(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
 
 				if canYield==1:
 					for ks in W:
@@ -199,7 +200,7 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
 
 				if canYield==1:
 					for ks in W:
@@ -233,7 +234,7 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
 			
 				if canYield==1:
 					for ks in W:
@@ -345,7 +346,7 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices):
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses):
 	
 	#growingPhase
 	if t<T:
