@@ -145,8 +145,6 @@ def topKEvaluation(cat, k):
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
-				#proswrino to break
-				break
 
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
@@ -367,28 +365,32 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f1Ub)
 			
 				if f1Lb>t:
-					
-					if i not in W:
-						#always > from whats already in W
+					found=0
+					poa=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							print('before updated W: ', W)
+							W.pop(pos)
+							W.insert(pos, [i,f1Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							print('updated pos W:', W)
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
 						W.insert(0, [i, f1Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
 						print('W:', W)
 						t=W[0][1]
 						print('t', t)
+						
 					
-					else:
-						print('before updated W: ', W)
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f1Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						print('updated pos W:', W)
-						t=W[0][1]
+
 					
 			for i in hashMapsList[1]:
 
@@ -404,25 +406,30 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f2Ub)
 
 				if f2Lb>t:
-					if i not in W:
-						W.insert(0, [i,f2Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							print('before updated W: ', W)
+							W.pop(pos)
+							W.insert(pos, [i,f2Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							print('updated pos W:', W)
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f2Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
+						W=Wk
 						print('W:', W)
 						t=W[0][1]
 						print('t', t)
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f2Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						print('updated pos W:', W)
-						t=W[0][1]
-		
+						
 
 		elif numOfChoices==3:
 			numOfAccesses+=3
@@ -447,23 +454,26 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 				upperBoundsDict.update(i=f1Ub)
 
-				if f1Lb>t:			
-					if i not in W:
+				if f1Lb>t:
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f1Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
 						W.insert(0, [i, f1Lb])
-						t=W[0][1]			
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f1Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
-						t=W[0][1]				
-
+						t=W[0][1]
 
 			for i in hashMapsList[1]:
 
@@ -486,18 +496,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f2Ub)
 				
 				if f2Lb>t:
-					if i not in W:
-						W.insert(0, [i,f2Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f2Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f2Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f2Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -523,21 +537,26 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f3Ub)
 
 				if f3Lb>t:
-					if i not in W:
-						W.insert(0, [i,f3Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f3Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f3Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f3Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
+						
 
 
 		elif numOfChoices==4:
@@ -580,18 +599,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f1Ub)
 			
 				if f1Lb>t:
-					if i not in W:
-						W.insert(0, [i,f1Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f1Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f1Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f1Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -634,18 +657,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f2Ub)
 
 				if f2Lb>t:
-					if i not in W:
-						W.insert(0, [i,f2Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f2Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f2Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f2Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -688,22 +715,25 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f3Ub)
 
 				if f3Lb>t:
-					if i not in W:
-						W.insert(0, [i,f3Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f3Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f3Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f3Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
-
 
 
 			for i in hashMapsList[3]:
@@ -743,18 +773,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f4Ub)
 
 				if f4Lb>t:
-					if i not in W:
-						W.insert(0, [i,f4Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f4Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f4Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f4Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -832,18 +866,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f1Ub)
 
 				if f1Lb>t:
-					if i not in W:
-						W.insert(0, [i,f1Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f1Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f1Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f1Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -919,22 +957,25 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f2Ub)
 
 				if f2Lb>t:
-					if i not in W:
-						W.insert(0, [i,f2Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f2Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f2Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f2Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
-
 
 			for i in hashMapsList[2]:
 
@@ -1005,18 +1046,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f3Ub)
 
 				if f3Lb>t:
-					if i not in W:
-						W.insert(0, [i,f3Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f3Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f3Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f3Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -1092,18 +1137,22 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f4Ub)
 
 				if f4Lb>t:
-					if i not in W:
-						W.insert(0, [i,f4Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f4Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f4Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f4Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
@@ -1180,21 +1229,26 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict.update(i=f5Ub)
 
 				if f5Lb>t:
-					if i not in W:
-						W.insert(0, [i,f5Lb])
-						t=W[0][1]
-					else:
-						pos=0
-						for ks in W:
-							if ks[0]==i:
-								W.pop(pos)
-								break
-							else:
-								pos+=1
-						W.insert(pos, [i,f5Lb])
+					found=0
+					pos=0
+					for ks in W:
+						if ks[0]==i:
+							found=1
+							W.pop(pos)
+							W.insert(pos, [i,f5Lb])
+							Wk=sorted(W, reverse=True, key=itemgetter(1))
+							W=Wk
+							t=W[0][1]
+							break		
+						else:
+							pos+=1
+	
+					if found==0:
+						W.insert(0, [i, f5Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
+						
 		return 0
 
 
@@ -1442,7 +1496,6 @@ if __name__ == '__main__':
 	inputs=getINput()
 	chosenCategories=inputs[0]
 	k=inputs[1]
-	print('k', k)
 	counter=0
 	with open('topks.csv', 'w', encoding='UTF-8') as rp1: 
 		csv_writer = csv.writer(rp1, delimiter=',')
