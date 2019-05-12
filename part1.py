@@ -85,7 +85,7 @@ def makeHashMaps(cat, k):
 	hashMap3={}
 	hashMap4={}
 	hashMap5={}
-
+	canYield=0
 
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
@@ -106,9 +106,6 @@ def makeHashMaps(cat, k):
 
 	
 	with open(optionFiles[cat[0]], 'r', encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r', encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r', encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r', encoding='UTF-8') as df5:
-		
-		growningPhase=1
-		pos=0
 		
 		if numOfChoices==1: #cat[0] 
 
@@ -134,16 +131,22 @@ def makeHashMaps(cat, k):
 					maxv2=data2[1]
 					firstRow=0
 
-				performance1=normalization(int(data1[1]), maxv1) #tis grammis p eimai twra
-				performance2=normalization(int(data2[1]), maxv2) #tis grammis p eimai twra
+				performance1=normalization(int(data1[1]), maxv1) 
+				performance2=normalization(int(data2[1]), maxv2) 
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})	
 				T=performance1+performance2
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1,performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices)
-		
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+
+				if canYield==1:
+					for ks in W:
+						topKPlayer=hashMap.get(ks[0])
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1])]
+				#proswrino to break
+				break
 		elif numOfChoices==3: #cat[0] cat[1] cat[2]
 
 			firstRow=1
@@ -169,7 +172,12 @@ def makeHashMaps(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				lara(currentIds, currentPerformances, hashMapsList,t, T, W, pos, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList,t, T, W, numOfChoices)
+
+				if canYield==1:
+					for ks in W:
+						topKPlayer=hashMap.get(ks[0])
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1])]
 
 		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
 
@@ -199,7 +207,12 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices)
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+
+				if canYield==1:
+					for ks in W:
+						topKPlayer=hashMap.get(ks[0])
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1])]
 
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
@@ -218,7 +231,7 @@ def makeHashMaps(cat, k):
 					maxv4=data4[1]
 					maxv5=data5[1]
 					firstRow=0
-					
+
 				performance1=normalization(int(data1[1]), maxv1)
 				performance2=normalization(int(data2[1]), maxv2) 
 				performance3=normalization(int(data3[1]), maxv3)	
@@ -233,8 +246,12 @@ def makeHashMaps(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices)
-
+				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices)
+			
+				if canYield==1:
+					for ks in W:
+						topKPlayer=hashMap.get(ks[0])
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1])]
 		'''
 		with open(results, 'w', encoding='UTF-8') as record:
 
@@ -243,8 +260,11 @@ def makeHashMaps(cat, k):
 		
 		'''
 
+
 def normalization(rowValue, maxv):
 	return rowValue/maxv
+
+
 
 def fixData(row, numOfChoices):
 
@@ -338,9 +358,8 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoices):
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, numOfChoices):
 	
-
 	#growingPhase
 	if t<T:
 
@@ -357,17 +376,29 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoic
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 			
 				if f1Lb>t:
+					
 					if i not in W:
-						t=f1Lb
-						W.insert(pos, i)
-						pos+=1
+						#always > from whats already in W
+						W.insert(0, [i, f1Lb])
+						print('W:', W)
+						t=W[0][1]
+						print('t', t)
+					
 					else:
-						W.remove(i)
-						W.insert(pos, i)
-						Wk=sorted(W.values(), key=itemgetter(1))
+						print('before updated W: ', W)
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f1Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
-						print(W)
-
+						print('updated pos W:', W)
+						t=W[0][1]
+					
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0]:
@@ -379,22 +410,24 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoic
 
 				if f2Lb>t:
 					if i not in W:
-						t=f2Lb
-						W.insert(pos, i)
-						pos+=1
+						W.insert(0, [i,f2Lb])
+						print('W:', W)
+						t=W[0][1]
+						print('t', t)
 					else:
-						W.remove(i)
-						W.insert(pos, i)
-						Wk=sorted(W.values(), key=itemgetter(1))
+						pos=0
+						for ks in W:
+							if ks[0]==i:
+								W.pop(pos)
+								break
+							else:
+								pos+=1
+						W.insert(pos, [i,f2Lb])
+						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
-						print(W)
-						#for ks in W:
-							#if hashMapsList[1].get(i)>list(W.items()[ks][0]):
-
-'''
-
-
-
+						print('updated pos W:', W)
+						t=W[0][1]
+		'''
 		elif numOfChoices==3:
 
 			#update lower bounds
@@ -412,9 +445,6 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoic
 				else:
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				if f1Lb>t:
-					t=f1Lb
-					W.insert(pos, i)
 
 
 			for i in hashMapsList[1]:
@@ -431,9 +461,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoic
 				else:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				if f2Lb>t:
-					t=f2Lb
-					W.insert(pos, i)
+
 
 			for i in hashMapsList[2]:
 
@@ -449,9 +477,6 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoic
 				else:
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				if f3Lb>t:
-					t=f3Lb
-					W.insert(pos, i)
 
 
 		elif numOfChoices==4:
@@ -837,9 +862,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, pos, numOfChoic
 
 				else:
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
+		
+	
+		'''
 	#shrinkingPhase
 	else:
-	'''
+
+
 
 if __name__ == "__main__":
 	
