@@ -366,7 +366,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 			
 				if f1Lb>t:
 					found=0
-					poa=0
+					pos=0
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -1248,7 +1248,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[0][1]
-						
+
 		return 0
 
 
