@@ -235,7 +235,7 @@ def topKEvaluation(cat, k):
 		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
 
 			for row in zip(df1,df2,df3,df4,df5):
-				data1,data2, data3, data4=fixData(row, numOfChoices)
+				data1,data2, data3, data4, data5=fixData(row, numOfChoices)
 
 				if firstRow==1:
 					maxv1=data1[1]
@@ -270,7 +270,12 @@ def topKEvaluation(cat, k):
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
-						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
+						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
+#vale periptwseis:
+		for ks in W:
+			topKPlayer=hashMap.get(ks[0])
+			yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
+
 
 
 def normalization(rowValue, maxv):
@@ -1083,7 +1088,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i in hashMapsList[3] and i not in hashMapsList[4]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
-					f3Ub=hashMapsList[0].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[4]
+					f3Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+currentPerformances[0]+currentPerformances[4]
 
 				elif i not in hashMapsList[0] and i in hashMapsList[1] and i not in hashMapsList[3] and i in hashMapsList[4]:
 					f3Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[4].get(i)
@@ -1369,7 +1374,7 @@ if __name__ == '__main__':
 				print('No results. 0 num of numOfAccesses. Terminate.')
 				break
 			elif counter<k:
-				csv_writer.writerow(topks[:-1])
+				csv_writer.writerow(str(topks[:-1]))
 				print(topks[:-1])
 				counter+=1
 			else:
