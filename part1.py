@@ -91,15 +91,44 @@ def topKEvaluation(cat, k):
 	canYield=0
 	numOfAccesses=0 #num of lines read from files
 	firstRow=1	
-
+	name=''
+	trb=0
+	ast=0
+	stl=0
+	blk=0
+	pts=0
+	count=0
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
 		row=df.readline() #to skip labels
 
 		for row in df:						
 			data=row.split(',') 
-			data[-1] = data[-1].strip() #remove \n
-			hashMap.update({int(data[0]): [data[1], data[2], data[3], data[4], data[5], data[6], data[7]]})
+			data[-1] = data[-1].strip() #remove 
+
+			if name==data[1]:
+				count+=1
+				print('data1', data[1])
+				#krataei mono tin teleutaia omada alla dn mas noiaazei
+				name=data[1]
+				trb+=int(data[3])
+				ast+=int(data[4])
+				stl+=int(data[5])
+				blk+=int(data[6])
+				pts+=int(data[7])
+				#hashMap[int(data[0])-1]= [name, data[2], trb, ast, stl, blk, pts]
+				hashMap.update({int(data[0])-count: [name, data[2], trb, ast, stl, blk, pts]})
+			else:
+				count=0
+				name=data[1]
+				trb=int(data[3])
+				ast=int(data[4])
+				stl=int(data[5])
+				blk=int(data[6])
+				pts=int(data[7])
+				hashMap.update({int(data[0]): [name, data[2], trb, ast, stl, blk, pts]})
+			
+		print(hashMap)
 
 	optionFiles={0: allStats, 1: reboundStats, 2: assistStats, 3: stealStats, 4: blockStats, 5: pointStats}
 	numOfChoices=len(cat)
@@ -115,11 +144,10 @@ def topKEvaluation(cat, k):
 		if numOfChoices==1: #cat[0] 
 	
 			for row in df1:
-				numOfAccesses+=1
 				data1=row.split(',')
 				topKPlayer=hashMap.get(int(data1[0]))
 				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), numOfAccesses]
-
+				numOfAccesses+=1
 
 		elif numOfChoices==2: #cat[0] cat[1]	
 
@@ -480,11 +508,11 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 				elif i not in hashMapsList[0] and i in hashMapsList[2]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
-					f2Ub==hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]
+					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]
 
 				elif i in hashMapsList[0] and i in hashMapsList[2]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
-					f2Ub==hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
 				upperBoundsDict[f2Ub]=i
 				
@@ -1438,7 +1466,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[currentIds[2]]=newUb
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
-				if t>=next(iter(upperBoundsDict.values())):
+				if t>=next(iter(upperBoundsDict.values())): #to prwto value tou dict
 					return 1
 
 
@@ -1500,7 +1528,8 @@ if __name__ == '__main__':
 				print(topks[:-1])
 				counter+=1
 			else:
-				csv_writer.writerow(topks[-1])
+				accesses=['number of accesses', str(topks[-1])]
+				csv_writer.writerow(accesses)
 				print('numOfAccesses', topks[-1])
 				break
 	 
