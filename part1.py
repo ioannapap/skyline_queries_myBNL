@@ -91,13 +91,7 @@ def topKEvaluation(cat, k):
 	canYield=0
 	numOfAccesses=0 #num of lines read from files
 	firstRow=1	
-	name=''
-	ids=0
-	trb=0
-	ast=0
-	stl=0
-	blk=0
-	pts=0
+
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
 		row=df.readline() #to skip labels
@@ -105,28 +99,14 @@ def topKEvaluation(cat, k):
 		for row in df:						
 			data=row.split(',') 
 			data[-1] = data[-1].strip() #remove 
-
-			if name==data[1]:
-				
-				print('data1', data[1])
-				#krataei mono tin teleutaia omada alla dn mas noiaazei
-				name=data[1]
-				trb+=int(data[3])
-				ast+=int(data[4])
-				stl+=int(data[5])
-				blk+=int(data[6])
-				pts+=int(data[7])
-				#hashMap[int(data[0])-1]= [name, data[2], trb, ast, stl, blk, pts]
-				hashMap.update({ids: [name, data[2], trb, ast, stl, blk, pts]})
-			else:
-				ids+=1
-				name=data[1]
-				trb=int(data[3])
-				ast=int(data[4])
-				stl=int(data[5])
-				blk=int(data[6])
-				pts=int(data[7])
-				hashMap.update({ids: [name, data[2], trb, ast, stl, blk, pts]})
+			name=data[1]
+			team=data[2]
+			trb=int(data[3])
+			ast=int(data[4])
+			stl=int(data[5])
+			blk=int(data[6])
+			pts=int(data[7])
+			hashMap.update({int(data[0]): [name, team, trb, ast, stl, blk, pts]})
 			
 		print(hashMap)
 
@@ -1528,7 +1508,7 @@ if __name__ == '__main__':
 				print(topks[:-1])
 				counter+=1
 			else:
-				accesses=['number of accesses', str(topks[-1])]
+				accesses=['NUMBER OF ACCESSES', topks[-1]]
 				csv_writer.writerow(accesses)
 				print('numOfAccesses', topks[-1])
 				break
