@@ -614,7 +614,10 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
 			u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
-						
+			print('upperBoundsDict:', upperBoundsDict)
+			print('u:', u)
+			print('W:', W)
+		
 
 		elif numOfChoices==4:
 
@@ -668,7 +671,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						t=W[-1][1]
 
 				else:
-					upperBoundsDict[i]=f1Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f1Ub
 
 			for i in hashMapsList[1]:
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
@@ -718,7 +727,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						t=W[-1][1]
 
 				else:
-					upperBoundsDict[i]=f2Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f2Ub
 
 
 			for i in hashMapsList[2]:
@@ -767,9 +782,14 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-
 				else:
-					upperBoundsDict[i]=f3Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f3Ub
 
 			for i in hashMapsList[3]:
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
@@ -818,7 +838,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						W=Wk
 						t=W[-1][1]
 				else:
-					upperBoundsDict[i]=f4Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f4Ub
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
@@ -914,9 +940,14 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-
 				else:
-					upperBoundsDict[i]=f1Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f1Ub
 
 
 			for i in hashMapsList[1]:
@@ -1007,9 +1038,14 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-
 				else:
-					upperBoundsDict[i]=f2Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f2Ub
 
 			for i in hashMapsList[2]:
 
@@ -1099,7 +1135,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						t=W[-1][1]
 
 				else:
-					upperBoundsDict[i]=f3Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f3Ub
 
 			for i in hashMapsList[3]:
 
@@ -1191,7 +1233,13 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						t=W[-1][1]
 
 				else:
-					upperBoundsDict[i]=f4Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f4Ub
 
 			for i in hashMapsList[4]:
 
@@ -1280,9 +1328,14 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-
 				else:
-					upperBoundsDict[i]=f5Ub
+					for ks in W:
+						found=0
+						if ks[0]==i:
+							found=1
+							break
+					if found==0:
+						upperBoundsDict[i]=f5Ub
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
