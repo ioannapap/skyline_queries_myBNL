@@ -1291,7 +1291,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 
 		#******************************************************************************check now
 
-		if t<u:
+		if t<u or t<T:
 			return [W, t, u, T, upperBoundsDict, numOfAccesses, 0]
 		else:
 			return [W, t, u, T, upperBoundsDict, numOfAccesses, 1]
