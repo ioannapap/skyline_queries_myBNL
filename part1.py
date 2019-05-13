@@ -107,8 +107,6 @@ def topKEvaluation(cat, k):
 			blk=int(data[6])
 			pts=int(data[7])
 			hashMap.update({int(data[0]): [name, team, trb, ast, stl, blk, pts]})
-			
-		print(hashMap)
 
 	optionFiles={0: allStats, 1: reboundStats, 2: assistStats, 3: stealStats, 4: blockStats, 5: pointStats}
 	numOfChoices=len(cat)
@@ -147,9 +145,11 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1, performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
-
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				W=R[0]
+				canYield=R[1]
 				if canYield==1:
+					print(W)
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
@@ -175,8 +175,9 @@ def topKEvaluation(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
-
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				W=R[0]
+				canYield=R[1]
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
@@ -206,8 +207,10 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
-
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				print('im here')
+				W=R[0]
+				canYield=R[1]
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
@@ -240,8 +243,9 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				canYield=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
-			
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				W=R[0]
+				canYield=R[1]
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
@@ -346,7 +350,7 @@ def fixData(row, numOfChoices):
 
 
 def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses):
-	
+	print('W $$$$$$$$$$', W)
 	#growingPhase
 	if t<T:
 
@@ -376,7 +380,6 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 							W.insert(pos, [i,f1Lb])
 							Wk=sorted(W, reverse=True, key=itemgetter(1))
 							W=Wk
-							print('updated pos W:', W)
 							t=W[0][1]
 							break		
 						else:
@@ -389,8 +392,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						print('W:', W)
 						t=W[0][1]
 						print('t', t)
-						
-					
+							
 
 					
 			for i in hashMapsList[1]:
@@ -407,17 +409,16 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict[i]=f2Ub
 
 				if f2Lb>t:
+					print('before updated W:', W)
 					found=0
 					pos=0
 					for ks in W:
 						if ks[0]==i:
 							found=1
-							print('before updated W: ', W)
 							W.pop(pos)
 							W.insert(pos, [i,f2Lb])
 							Wk=sorted(W, reverse=True, key=itemgetter(1))
 							W=Wk
-							print('updated pos W:', W)
 							t=W[0][1]
 							break		
 						else:
@@ -430,7 +431,6 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						print('W:', W)
 						t=W[0][1]
 						print('t', t)
-						
 
 		elif numOfChoices==3:
 			numOfAccesses+=3
@@ -1250,7 +1250,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						W=Wk
 						t=W[0][1]
 
-		return 0
+		return [W,0]
 
 
 
@@ -1260,12 +1260,12 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 		upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 		upperBoundsDict=dict(upperBoundsDictK)
-		print('upperBoundsDict: ', upperBoundsDict)
+		#print('upperBoundsDict: ', upperBoundsDict)
 
 		if t<next(iter(upperBoundsDict.values())): #the first value in upperBoundsDict
 		
 			if numOfChoices==2:
-
+				print('w is:', W)
 				numOfAccesses+=1
 
 				if currentIds[0] in hashMapsList[1]:
@@ -1276,7 +1276,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict=dict(upperBoundsDictK)
 
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 				numOfAccesses+=1
@@ -1289,7 +1289,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 
@@ -1311,7 +1311,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 				numOfAccesses+=1
@@ -1331,7 +1331,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 				numOfAccesses+=1
@@ -1351,7 +1351,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 			elif numOfChoices==4:
@@ -1383,7 +1383,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 				numOfAccesses+=1
@@ -1415,7 +1415,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 
@@ -1447,7 +1447,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())): #to prwto value tou dict
-					return 1
+					return [W,1]
 
 
 				numOfAccesses+=1
@@ -1478,7 +1478,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return 1
+					return [W,1]
 
 
 
@@ -1487,7 +1487,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 		else:
 
-			return 1
+			return [W,1]
 
 
 
