@@ -145,9 +145,13 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1, performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
-				canYield=R[1]
+				t=R[1]
+				T=R[2]
+				upperBoundsDict=R[3]
+				numOfAccesses=R[4]
+				canYield=R[5]
 				if canYield==1:
 					print(W)
 					for ks in W:
@@ -175,9 +179,13 @@ def topKEvaluation(cat, k):
 				T=performance1+performance2+performance3
 				currentPerformances=[performance1,performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
-				canYield=R[1]
+				t=R[1]
+				T=R[2]
+				upperBoundsDict=R[3]
+				numOfAccesses=R[4]
+				canYield=R[5]
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
@@ -207,10 +215,14 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				print('im here')
 				W=R[0]
-				canYield=R[1]
+				t=R[1]
+				T=R[2]
+				upperBoundsDict=R[3]
+				numOfAccesses=R[4]
+				canYield=R[5]
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
@@ -243,9 +255,13 @@ def topKEvaluation(cat, k):
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
 				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses)
+				R=lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
-				canYield=R[1]
+				t=R[1]
+				T=R[2]
+				upperBoundsDict=R[3]
+				numOfAccesses=R[4]
+				canYield=R[5]
 				if canYield==1:
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
@@ -349,9 +365,14 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses):
-	print('W $$$$$$$$$$', W)
+def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
+	print('W ::::::::::::::::::', W)
+
+	print('t ::::::::::::::::::', t)
+	Wk=sorted(W, reverse=True, key=itemgetter(1))
+	W=Wk
 	#growingPhase
+	print('T', T)
 	if t<T:
 
 		if numOfChoices==2:
@@ -369,13 +390,12 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				
 				upperBoundsDict[i]=f1Ub
 			
-				if f1Lb>t:
+				if f1Lb>t or f1Lb>=W[-1][1]:
 					found=0
 					pos=0
 					for ks in W:
 						if ks[0]==i:
 							found=1
-							print('before updated W: ', W)
 							W.pop(pos)
 							W.insert(pos, [i,f1Lb])
 							Wk=sorted(W, reverse=True, key=itemgetter(1))
@@ -389,10 +409,8 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						W.insert(0, [i, f1Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
-						print('W:', W)
 						t=W[0][1]
-						print('t', t)
-							
+
 
 					
 			for i in hashMapsList[1]:
@@ -408,8 +426,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 				upperBoundsDict[i]=f2Ub
 
-				if f2Lb>t:
-					print('before updated W:', W)
+				if f2Lb>t or f2Lb>=W[-1][1]:
 					found=0
 					pos=0
 					for ks in W:
@@ -428,10 +445,8 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						W.insert(0, [i, f2Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
-						print('W:', W)
 						t=W[0][1]
-						print('t', t)
-
+	
 		elif numOfChoices==3:
 			numOfAccesses+=3
 			#update lower bounds
@@ -1250,7 +1265,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						W=Wk
 						t=W[0][1]
 
-		return [W,0]
+		return [W, t, T, upperBoundsDict, numOfAccesses, 0]
 
 
 
@@ -1276,7 +1291,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDict=dict(upperBoundsDictK)
 
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 				numOfAccesses+=1
@@ -1289,7 +1304,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 
@@ -1311,7 +1326,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 				numOfAccesses+=1
@@ -1331,7 +1346,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 				numOfAccesses+=1
@@ -1351,7 +1366,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 			elif numOfChoices==4:
@@ -1383,7 +1398,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 				numOfAccesses+=1
@@ -1415,7 +1430,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 
@@ -1447,7 +1462,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())): #to prwto value tou dict
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 				numOfAccesses+=1
@@ -1478,7 +1493,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 				upperBoundsDictK=sorted(upperBoundsDict.items(), key=lambda kv: kv[1])
 				upperBoundsDict=dict(upperBoundsDictK)
 				if t>=next(iter(upperBoundsDict.values())):
-					return [W,1]
+					return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 
@@ -1487,7 +1502,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 		else:
 
-			return [W,1]
+			return [W, t, T, upperBoundsDict, numOfAccesses ,1]
 
 
 
