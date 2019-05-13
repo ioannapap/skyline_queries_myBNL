@@ -92,12 +92,12 @@ def topKEvaluation(cat, k):
 	numOfAccesses=0 #num of lines read from files
 	firstRow=1	
 	name=''
+	ids=0
 	trb=0
 	ast=0
 	stl=0
 	blk=0
 	pts=0
-	count=0
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
 		row=df.readline() #to skip labels
@@ -107,7 +107,7 @@ def topKEvaluation(cat, k):
 			data[-1] = data[-1].strip() #remove 
 
 			if name==data[1]:
-				count+=1
+				
 				print('data1', data[1])
 				#krataei mono tin teleutaia omada alla dn mas noiaazei
 				name=data[1]
@@ -117,16 +117,16 @@ def topKEvaluation(cat, k):
 				blk+=int(data[6])
 				pts+=int(data[7])
 				#hashMap[int(data[0])-1]= [name, data[2], trb, ast, stl, blk, pts]
-				hashMap.update({int(data[0])-count: [name, data[2], trb, ast, stl, blk, pts]})
+				hashMap.update({ids: [name, data[2], trb, ast, stl, blk, pts]})
 			else:
-				count=0
+				ids+=1
 				name=data[1]
 				trb=int(data[3])
 				ast=int(data[4])
 				stl=int(data[5])
 				blk=int(data[6])
 				pts=int(data[7])
-				hashMap.update({int(data[0]): [name, data[2], trb, ast, stl, blk, pts]})
+				hashMap.update({ids: [name, data[2], trb, ast, stl, blk, pts]})
 			
 		print(hashMap)
 
