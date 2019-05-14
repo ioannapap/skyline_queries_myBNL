@@ -57,7 +57,6 @@ def checkArgs(args, cat):
 
 def myBNL(cat):
 
-	optionFiles={0: allStats, 1: reboundStats, 2: assistStats, 3: stealStats, 4: blockStats, 5: pointStats}
 	numOfChoices=len(cat)
 	if numOfChoices<5:
 		leftovers=5-numOfChoices
@@ -72,46 +71,65 @@ def myBNL(cat):
 		row=df.readline()
 		
 		for row in df:		
-
+			print('')
 			data=row.split(',') 
 			data[-1] = data[-1].strip() #remove 
-			iD=data[0]
+			iD=data[0] #name=data[1], tm=data[2], trb=data[3], ast=data[4], stl=data[5], blk=data[6], pts=data[7]
+			delList=[]
+			needToInsert=0
 
 			if numOfChoices==1:   #cat[0]
 
 				if firstTime==1:
-					slHashMap.update(iD: data[cat[0]])
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2])] }) #+2 due to name and tm column
 					firstTime=0
 
-		
+				for idd in slHashMap:
+
+					val1=slHashMap.get(idd)
+					#val1[0] einai to name
+					val1=val1[1] 
+
+					if int(data[cat[0]+2])>val1:	
+						delList.insert(len(delList), idd)
+						needToInsert=1
+						
+				for idss in delList:
+					del slHashMap[idss]
+					
+				if needToInsert==1:
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2])] })
+					needToInsert=0
+				
+
+			'''	
 			elif numOfChoices==2:  #cat[0] cat[1]
 
 				if firstTime==1:
-					slHashMap.update(iD: data[cat[0]], data[cat[1]])
+					slHashMap.update({iD : data[cat[0]], data[cat[1]]})
 					firstTime=0
 
 			elif numOfChoices==3:  #cat[0] cat[1] cat[2]
 
 				if firstTime==1:
-					slHashMap.update(iD: data[cat[0]], data[cat[1]], data[cat[2]])
+					slHashMap.update({iD : data[cat[0]], data[cat[1]], data[cat[2]]})
 					firstTime=0
 
 			elif numOfChoices==4:  #cat[0] cat[1] cat[2] cat[3]
 
 				if firstTime==1:
-					slHashMap.update(iD: data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]])
+					slHashMap.update({iD : data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]]})
 					firstTime=0
 
 			elif numOfChoices==5:  #cat[0] cat[1] cat[2] cat[3] cat[4]
 
 				if firstTime==1:
-					slHashMap.update(iD: data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]], data[cat[4]])
+					slHashMap.update({iD: data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]], data[cat[4]]})
 					firstTime=0
 
-
-		
-
-		
+			'''
+		sk=list(slHashMap.values())
+		return sk
 
 
 
@@ -120,12 +138,13 @@ if __name__ == '__main__':
 
 	chosenCategories=getINput()
 	skyline=myBNL(chosenCategories)
-	print(chosenCategories)
-	with open('skyline.csv', 'w', encoding='UTF-8') as rp2:
 
+	with open('skyline.csv', 'w', encoding='UTF-8') as rp2:
+		
 		csv_writer = csv.writer(rp2, delimiter=',')
-		print('skyline: ', skyline)
-		csv_writer.writerow(skyline)
+		for s in skyline:
+			print('skyline: ', s)
+			csv_writer.writerow(s)
 
 
 
