@@ -139,15 +139,17 @@ def topKEvaluation(cat, k):
 					maxv2=data2[1]
 					firstRow=0
 
-				performance1=normalization(int(data1[1]), maxv1) 
-				performance2=normalization(int(data2[1]), maxv2) 
+				performance1=int(data1[1])
+				performance2=int(data2[1])
+				#performance1=normalization(int(data1[1]), maxv1) 
+				#performance2=normalization(int(data2[1]), maxv2) 
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})	
 				T=performance1+performance2
 				currentIds=[data1[0], data2[0]]
 				currentPerformances=[performance1, performance2]
 				hashMapsList=[hashMap1, hashMap2]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
+				R=myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
 				t=R[1]
 				u=R[2]
@@ -156,7 +158,8 @@ def topKEvaluation(cat, k):
 				numOfAccesses=R[5]
 				canYield=R[6]
 				if canYield==1:
-					print('canYield==1 ,W: ', W)
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
@@ -172,17 +175,22 @@ def topKEvaluation(cat, k):
 					maxv3=data3[1]
 					firstRow=0
 
-				performance1=normalization(int(data1[1]), maxv1)
-				performance2=normalization(int(data2[1]), maxv2) 
-				performance3=normalization(int(data3[1]), maxv3)
+
+				performance1=int(data1[1])
+				performance2=int(data2[1])
+				performance3=int(data3[1])
+				
+				#performance1=normalization(int(data1[1]), maxv1)
+				#performance2=normalization(int(data2[1]), maxv2) 
+				#performance3=normalization(int(data3[1]), maxv3)
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})
 				currentIds=[data1[0], data2[0], data3[0]]
 				T=performance1+performance2+performance3
-				currentPerformances=[performance1,performance2, performance3]
+				currentPerformances=[performance1, performance2, performance3]
 				hashMapsList=[hashMap1, hashMap2, hashMap3]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
+				R=myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
 				t=R[1]
 				u=R[2]
@@ -191,6 +199,8 @@ def topKEvaluation(cat, k):
 				numOfAccesses=R[5]
 				canYield=R[6]
 				if canYield==1:
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
@@ -207,19 +217,24 @@ def topKEvaluation(cat, k):
 					maxv4=data4[1]
 					firstRow=0
 
-				performance1=normalization(int(data1[1]), maxv1)
-				performance2=normalization(int(data2[1]), maxv2) 
-				performance3=normalization(int(data3[1]), maxv3)	
-				performance4=normalization(int(data4[1]), maxv4)
+
+				performance1=int(data1[1])
+				performance2=int(data2[1])
+				performance3=int(data3[1])
+				performance4=int(data4[1])
+				#performance1=normalization(int(data1[1]), maxv1)
+				#performance2=normalization(int(data2[1]), maxv2) 
+				#performance3=normalization(int(data3[1]), maxv3)	
+				#performance4=normalization(int(data4[1]), maxv4)
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})				
 				hashMap4.update({int(data4[0]): performance4})
 				T=performance1+performance2+performance3+performance4
 				currentIds=[data1[0], data2[0], data3[0], data4[0]]
-				currentPerformances=[performance1,performance2, performance3, performance4]
+				currentPerformances=[performance1, performance2, performance3, performance4]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
+				R=myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
 				t=R[1]
 				u=R[2]
@@ -228,6 +243,8 @@ def topKEvaluation(cat, k):
 				numOfAccesses=R[5]
 				canYield=R[6]
 				if canYield==1:
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), numOfAccesses]
@@ -245,11 +262,16 @@ def topKEvaluation(cat, k):
 					maxv5=data5[1]
 					firstRow=0
 
-				performance1=normalization(int(data1[1]), maxv1)
-				performance2=normalization(int(data2[1]), maxv2) 
-				performance3=normalization(int(data3[1]), maxv3)	
-				performance4=normalization(int(data4[1]), maxv4)
-				performance5=normalization(int(data5[1]), maxv5)
+				performance1=int(data1[1])
+				performance2=int(data2[1])
+				performance3=int(data3[1])
+				performance4=int(data4[1])
+				performance5=int(data5[1])
+				#performance1=normalization(int(data1[1]), maxv1)
+				#performance2=normalization(int(data2[1]), maxv2) 
+				#performance3=normalization(int(data3[1]), maxv3)	
+				#performance4=normalization(int(data4[1]), maxv4)
+				#performance5=normalization(int(data5[1]), maxv5)
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})				
@@ -257,9 +279,9 @@ def topKEvaluation(cat, k):
 				hashMap5.update({int(data5[0]): performance5})
 				T=performance1+performance2+performance3+performance4+performance5
 				currentIds=[data1[0], data2[0], data3[0], data4[0], data5[0]]
-				currentPerformances=[performance1,performance2, performance3, performance4, performance5]
+				currentPerformances=[performance1, performance2, performance3, performance4, performance5]
 				hashMapsList=[hashMap1, hashMap2, hashMap3, hashMap4, hashMap5]
-				R=lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
+				R=myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k)
 				W=R[0]
 				t=R[1]
 				u=R[2]
@@ -268,19 +290,40 @@ def topKEvaluation(cat, k):
 				numOfAccesses=R[5]
 				canYield=R[6]
 				if canYield==1:
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
-#vale periptwseis:
-		for ks in W:
-			topKPlayer=hashMap.get(ks[0])
-			yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
+
+		Wk=sorted(W, reverse=True, key=itemgetter(1))
+		W=Wk
+		if numOfChoices==2:
+
+			for ks in W:
+				topKPlayer=hashMap.get(ks[0])
+				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
+
+		elif numOfChoices==3:
+			for ks in W:
+				topKPlayer=hashMap.get(ks[0])
+				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
+
+		elif numOfChoices==4:
+
+			for ks in W:
+				topKPlayer=hashMap.get(ks[0])
+				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), numOfAccesses]
+
+		elif numOfChoices==5:
+			for ks in W:
+				topKPlayer=hashMap.get(ks[0])
+				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
 
 
 
 def normalization(rowValue, maxv):
 	return rowValue/maxv
-
 
 
 def fixData(row, numOfChoices):
@@ -375,11 +418,11 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
+def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
 
 	#growingPhase
-	print('t: ', t)
-	print('T: ', T)
+	#print('t: ', t)
+	#print('T: ', T)
 	if len(W)<k or t<u:
 
 		if numOfChoices==2:
@@ -473,7 +516,10 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
-			u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
+			try:
+				u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
+			except StopIteration:
+				print('StopIteration')
 
 			print('upperBoundsDict:', upperBoundsDict)
 			print('u:', u)
@@ -534,7 +580,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]+currentPerformances[2]
 				elif i in hashMapsList[0] and i not in hashMapsList[2]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
-					f2Ub==hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]
+					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]
 				elif i not in hashMapsList[0] and i in hashMapsList[2]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f2Ub=hashMapsList[1].get(i)+hashMapsList[2].get(i)+currentPerformances[0]
@@ -618,7 +664,10 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
-			u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
+			try:
+				u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
+			except StopIteration:
+				print('StopIteration')
 			print('upperBoundsDict:', upperBoundsDict)
 			print('u:', u)
 			print('W:', W)
@@ -853,7 +902,10 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
-			u=next(iter(upperBoundsDict.values())) 
+			try:
+				u=next(iter(upperBoundsDict.values())) 
+			except StopIteration:
+				print('StopIteration')
 	
 		elif numOfChoices==5:
 
@@ -1344,7 +1396,10 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
-			u=next(iter(upperBoundsDict.values())) 
+			try:
+				u=next(iter(upperBoundsDict.values())) 
+			except StopIteration:
+				print('StopIteration')
 
 
 		#******************************************************************************check now
@@ -1352,6 +1407,12 @@ def lara(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsD
 		if t<u or t<T:
 			return [W, t, u, T, upperBoundsDict, numOfAccesses, 0]
 		else:
+
+			for ids,val in upperBoundsDict.items():
+				if len(W)<k:
+					#we dont care that it enters with val because we print data by key through ALL file
+					W.insert(len(W), [ids, val])
+
 			return [W, t, u, T, upperBoundsDict, numOfAccesses, 1]
 
 	#shrinkingPhase
@@ -1374,7 +1435,7 @@ if __name__ == '__main__':
 				print('No results. 0 num of numOfAccesses. Terminate.')
 				break
 			elif counter<k:
-				csv_writer.writerow(str(topks[:-1]))
+				csv_writer.writerow(topks[:-1])
 				print(topks[:-1])
 				counter+=1
 			else:
