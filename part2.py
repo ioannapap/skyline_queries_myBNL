@@ -55,7 +55,7 @@ def checkArgs(args, cat):
 	return 1
 
 
-def makeHashMaps(cat):
+def myBNL(cat):
 
 	optionFiles={0: allStats, 1: reboundStats, 2: assistStats, 3: stealStats, 4: blockStats, 5: pointStats}
 	numOfChoices=len(cat)
@@ -64,14 +64,71 @@ def makeHashMaps(cat):
 		for i in range(leftovers):
 			cat.append(0)
 
-		print(cat)
-	
-	with open(optionFiles[cat[0]], 'r',encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r',encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r',encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r',encoding='UTF-8') as df5:
-		print('y')
+	slHashMap={}
+	firstTime=1
+
+	with open(allStats, 'r',encoding='UTF-8') as df:
+
+		row=df.readline()
+		
+		for row in df:		
+
+			data=row.split(',') 
+			data[-1] = data[-1].strip() #remove 
+			iD=data[0]
+
+			if numOfChoices==1:   #cat[0]
+
+				if firstTime==1:
+					slHashMap.update(iD: data[cat[0]])
+					firstTime=0
+
+		
+			elif numOfChoices==2:  #cat[0] cat[1]
+
+				if firstTime==1:
+					slHashMap.update(iD: data[cat[0]], data[cat[1]])
+					firstTime=0
+
+			elif numOfChoices==3:  #cat[0] cat[1] cat[2]
+
+				if firstTime==1:
+					slHashMap.update(iD: data[cat[0]], data[cat[1]], data[cat[2]])
+					firstTime=0
+
+			elif numOfChoices==4:  #cat[0] cat[1] cat[2] cat[3]
+
+				if firstTime==1:
+					slHashMap.update(iD: data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]])
+					firstTime=0
+
+			elif numOfChoices==5:  #cat[0] cat[1] cat[2] cat[3] cat[4]
+
+				if firstTime==1:
+					slHashMap.update(iD: data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]], data[cat[4]])
+					firstTime=0
+
+
+		
+
+		
 
 
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
 	chosenCategories=getINput()
+	skyline=myBNL(chosenCategories)
+	print(chosenCategories)
+	with open('skyline.csv', 'w', encoding='UTF-8') as rp2:
+
+		csv_writer = csv.writer(rp2, delimiter=',')
+		print('skyline: ', skyline)
+		csv_writer.writerow(skyline)
+
+
+
+
+
+
