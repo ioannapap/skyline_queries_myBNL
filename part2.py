@@ -80,9 +80,6 @@ def myBNL(cat):
 
 
 
-
-
-
 			if numOfChoices==1:   #cat[0]
 
 				if firstTime==1:
@@ -105,11 +102,6 @@ def myBNL(cat):
 				if needToInsert==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2])]})
 					needToInsert=0
-				
-
-
-
-
 
 
 
@@ -140,6 +132,7 @@ def myBNL(cat):
 				#**********************
 
 
+
 			elif numOfChoices==3:  #cat[0] cat[1] cat[2]
 
 				if firstTime==1:
@@ -167,6 +160,7 @@ def myBNL(cat):
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2])]})
 					needToInsert=0
 				#**********************
+
 
 		
 			elif numOfChoices==4:  #cat[0] cat[1] cat[2] cat[3]
@@ -224,8 +218,6 @@ def myBNL(cat):
 						delList.insert(len(delList), idd)
 						needToInsert=1
 				
-			
-				
 				#**********************		
 				for idss in delList:
 					del slHashMap[idss]
@@ -234,9 +226,7 @@ def myBNL(cat):
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2]), int(data[cat[4]+2])]})
 					needToInsert=0
 				#**********************
-
-
-			
+	
 
 		sk=list(slHashMap.values())
 		return sk
