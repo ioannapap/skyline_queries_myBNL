@@ -70,18 +70,23 @@ def myBNL(cat):
 
 		row=df.readline()
 		
-		for row in df:		
-			print('')
+		for row in df:	
+
 			data=row.split(',') 
 			data[-1] = data[-1].strip() #remove 
 			iD=data[0] #name=data[1], tm=data[2], trb=data[3], ast=data[4], stl=data[5], blk=data[6], pts=data[7]
 			delList=[]
 			needToInsert=0
 
+
+
+
+
+
 			if numOfChoices==1:   #cat[0]
 
 				if firstTime==1:
-					slHashMap.update({iD : [data[1], int(data[cat[0]+2])] }) #+2 due to name and tm column
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2])]}) #+2 due to name and tm column
 					firstTime=0
 
 				for idd in slHashMap:
@@ -98,36 +103,141 @@ def myBNL(cat):
 					del slHashMap[idss]
 					
 				if needToInsert==1:
-					slHashMap.update({iD : [data[1], int(data[cat[0]+2])] })
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2])]})
 					needToInsert=0
 				
 
-			'''	
+
+
+
+
+
+
 			elif numOfChoices==2:  #cat[0] cat[1]
 
 				if firstTime==1:
-					slHashMap.update({iD : data[cat[0]], data[cat[1]]})
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2])]}) 
 					firstTime=0
+
+				for idd in slHashMap:
+
+					val1=slHashMap.get(idd)
+					val2=slHashMap.get(idd)
+					val1=val1[1] 
+					val2=val2[2]
+
+					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1):
+						delList.insert(len(delList), idd)
+						needToInsert=1
+				
+				#**********************		
+				for idss in delList:
+					del slHashMap[idss]
+					
+				if needToInsert==1:
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2])]})
+					needToInsert=0
+				#**********************
+
 
 			elif numOfChoices==3:  #cat[0] cat[1] cat[2]
 
 				if firstTime==1:
-					slHashMap.update({iD : data[cat[0]], data[cat[1]], data[cat[2]]})
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2])]}) 
 					firstTime=0
 
+				for idd in slHashMap:
+
+					val1=slHashMap.get(idd)
+					val2=slHashMap.get(idd)
+					val3=slHashMap.get(idd)
+					val1=val1[1] 
+					val2=val2[2]
+					val3=val3[3]
+
+					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1 and int(data[cat[2]+2])>=val3) or (int(data[cat[2]+2])>val3 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2):
+						delList.insert(len(delList), idd)
+						needToInsert=1
+				
+				#**********************		
+				for idss in delList:
+					del slHashMap[idss]
+					
+				if needToInsert==1:
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2])]})
+					needToInsert=0
+				#**********************
+
+		
 			elif numOfChoices==4:  #cat[0] cat[1] cat[2] cat[3]
 
 				if firstTime==1:
-					slHashMap.update({iD : data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]]})
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2])]}) 
 					firstTime=0
+
+				for idd in slHashMap:
+
+					val1=slHashMap.get(idd)
+					val2=slHashMap.get(idd)
+					val3=slHashMap.get(idd)
+					val4=slHashMap.get(idd)
+					val1=val1[1] 
+					val2=val2[2]
+					val3=val3[3]
+					val4=val4[4]
+
+					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4) or (int(data[cat[2]+2])>val3 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[3]+2])>=val4) or (int(data[cat[3]+2])>val4 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3):
+						delList.insert(len(delList), idd)
+						needToInsert=1
+				
+				#**********************		
+				for idss in delList:
+					del slHashMap[idss]
+					
+				if needToInsert==1:
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2])]})
+					needToInsert=0
+				#**********************
+
+	
 
 			elif numOfChoices==5:  #cat[0] cat[1] cat[2] cat[3] cat[4]
 
 				if firstTime==1:
-					slHashMap.update({iD: data[cat[0]], data[cat[1]], data[cat[2]], data[cat[3]], data[cat[4]]})
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2]), int(data[cat[4]+2])]}) 
 					firstTime=0
 
-			'''
+				for idd in slHashMap:
+
+					val1=slHashMap.get(idd)
+					val2=slHashMap.get(idd)
+					val3=slHashMap.get(idd)
+					val4=slHashMap.get(idd)
+					val5=slHashMap.get(idd)
+					val1=val1[1] 
+					val2=val2[2]
+					val3=val3[3]
+					val4=val4[4]
+					val5=val5[5]
+
+					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4 and int(data[cat[4]+2])>=val5) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4 and int(data[cat[4]+2])>=val5) or (int(data[cat[2]+2])>val3 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[3]+2])>=val4 and int(data[cat[4]+2])>=val5) or (int(data[cat[3]+2])>val4 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[4]+2])>=val5) or (int(data[cat[4]+2])>val5 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4):
+						delList.insert(len(delList), idd)
+						needToInsert=1
+				
+			
+				
+				#**********************		
+				for idss in delList:
+					del slHashMap[idss]
+					
+				if needToInsert==1:
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2]), int(data[cat[4]+2])]})
+					needToInsert=0
+				#**********************
+
+
+			
+
 		sk=list(slHashMap.values())
 		return sk
 
