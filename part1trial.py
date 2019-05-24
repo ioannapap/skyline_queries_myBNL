@@ -448,7 +448,106 @@ def insertInW(lb, curID, upperBoundsDict, W, t, k):
 
 	return [W, t, upperBoundsDict]
 						
+def updateUpperBounds(upperBoundsDict, currentPerformances, hashMapsList, numOfChoices):
 
+	if numOfChoices==2:
+
+		for b in upperBoundsDict:
+
+			if b in hashMapsList[0] and b not in hashMapsList[1]:
+				newUb=hashMapsList[0].get(b)+currentPerformances[1]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1]:
+				newUb=hashMapsList[1].get(b)+currentPerformances[0]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)
+
+			upperBoundsDict[b]=newUb
+
+	
+	elif numOfChoices==3:
+
+		for b in upperBoundsDict:
+
+			if b in hashMapsList[0] and b not in hashMapsList[1] and not in hashMapsList[2]:
+				newUb=hashMapsList[0].get(b)+currentPerformances[1]+currentPerformances[2]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1] and not in hashMapsList[2]:
+				newUb=hashMapsList[1].get(b)+currentPerformances[0]+currentPerformances[2]
+
+			elif b not in hashMapsList[0] and b not in hashMapsList[1] and b in hashMapsList[2]:
+				newUb=hashMapsList[2].get(b)+currentPerformances[0]+currentPerformances[1]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1] and b not in hashMapsList[2]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)+currentPerformances[2]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1] and b in hashMapsList[2]:
+				newUb=hashMapsList[1].get(b)+hashMapsList[2].get(b)+currentPerformances[0]
+
+			elif b in hashMapsList[0] and b not in hashMapsList[1] and b in hashMapsList[2]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[2].get(b)+currentPerformances[1]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1] and b in hashMapsList[2]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)+hashMapsList[2].get(b)
+
+			upperBoundsDict[b]=newUb
+
+	elif numOfChoices==4:
+
+			if b in hashMapsList[0] and b not in hashMapsList[1] and not in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+currentPerformances[1]+currentPerformances[2]+currentPerformances[3]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1] and not in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[1].get(b)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]
+
+			elif b not in hashMapsList[0] and b not in hashMapsList[1] and b in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[2].get(b)+currentPerformances[0]+currentPerformances[1]+currentPerformances[3]
+
+			elif b not in hashMapsList[0] and b not in hashMapsList[1] and b not in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[3].get(b)+currentPerformances[0]+currentPerformances[1]+currentPerformances[2]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1] and b not in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)+currentPerformances[2]+currentPerformances[3]
+
+			elif b in hashMapsList[0] and b not in hashMapsList[1] and b in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[2].get(i)+currentPerformances[1]+currentPerformances[3]
+
+			elif b in hashMapsList[0] and b not in hashMapsList[1] and b not in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[3].get(i)+currentPerformances[1]+currentPerformances[2]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1] and b in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[1].get(b)+hashMapsList[2].get(b)+currentPerformances[0]+currentPerformances[3]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1] and b not in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[1].get(b)+hashMapsList[3].get(b)+currentPerformances[0]+currentPerformances[2]
+
+			elif b not in hashMapsList[0] and b not in hashMapsList[1] and b in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[2].get(b)+hashMapsList[3].get(b)+currentPerformances[0]+currentPerformances[1]
+
+			elif b not in hashMapsList[0] and b in hashMapsList[1] and b in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[1].get(b)+hashMapsList[2].get(b)+hashMapsList[3].get(b)+currentPerformances[0]
+
+			elif b in hashMapsList[0] and b not in hashMapsList[1] and b in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[2].get(b)+hashMapsList[3].get(b)+currentPerformances[1]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1] and b not in hashMapsList[2] and b in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)+hashMapsList[3].get(b)+currentPerformances[2]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1] and b in hashMapsList[2] and b not in hashMapsList[3]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)+hashMapsList[2].get(b)+currentPerformances[3]
+
+			elif b in hashMapsList[0] and b in hashMapsList[1] and b in hashMapsList[2]:
+				newUb=hashMapsList[0].get(b)+hashMapsList[1].get(b)+hashMapsList[2].get(b)
+
+			upperBoundsDict[b]=newUb
+
+	'''
+	elif numOfChoices==5:
+	'''	
+	upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
+	upperBoundsDict=dict(upperBoundsDictK)
+	return upperBoundsDict
 
 def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
 
@@ -465,7 +564,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 			upperBoundsDict[currentIds[0]]=f1Ub
 			upperBoundsDict[currentIds[1]]=f2Ub
-
+			upperBoundsDict= updateUpperBounds(upperBoundsDict, currentPerformances, hashMapsList)
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
 
@@ -524,7 +623,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 		
 
 	else: #shrinkingPhase
-
+		#keeping only the upperbounds that are not in W 
 		for ks in W:
 			if ks[0] in upperBoundsDict:
 				del upperBoundsDict[ks[0]]
@@ -571,7 +670,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						pass
 			
 				#CHECKING NOW AGAIN	
-				if t>=next(iter(upperBoundsDict.values())):
+				if T==0 or t>=next(iter(upperBoundsDict.values())):
 					return [W, t, T, upperBoundsDict, numOfAccesses, 1]
 
 				#NEXT
@@ -601,7 +700,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 						pass
 				
 				#CHECKING NOW AGAIN	
-				if t>=next(iter(upperBoundsDict.values())):
+				if T==0 or t>=next(iter(upperBoundsDict.values())):
 					return [W, t, T, upperBoundsDict, numOfAccesses, 1]
 
 				return [W, t, T, upperBoundsDict, numOfAccesses, 0]
@@ -613,7 +712,7 @@ def lara(currentIds, currentPerformances, hashMapsList, t, T, W, upperBoundsDict
 
 			elif numOfChoices==5:
 			'''
-		else:
+		elif T==0 or t>=next(iter(upperBoundsDict.values())):
 
 			return [W, t, T, upperBoundsDict, numOfAccesses, 1]
 
