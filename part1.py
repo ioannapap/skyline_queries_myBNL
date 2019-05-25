@@ -681,7 +681,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 			for i in hashMapsList[1]:
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f2Lb=hashMapsList[1].get(i)
-					f2Lb=hashMapsList[1].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]
+					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]+currentPerformances[2]+currentPerformances[3]
 				elif i in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+currentPerformances[2]+currentPerformances[3]
