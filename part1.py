@@ -1,6 +1,5 @@
 import csv
 from operator import itemgetter
-import sys
 
 allStats='2017_ALL.csv'
 assistStats='2017_AST.csv'
@@ -10,7 +9,8 @@ blockStats='2017_BLK.csv'
 reboundStats='2017_TRB.csv'
 
 
-def getINput():
+
+def getInput():
 
 	chosenCategories=[]
 	args=[]
@@ -31,8 +31,6 @@ def getINput():
 
 
 def checkArgs(args, cat):
-
-	#checking chosenCategories
 
 	if args[0][0]!='[' or args[0][len(args[0])-1]!=']':
 		print('\nInsert the chosen categories in [ ]\n')
@@ -58,7 +56,6 @@ def checkArgs(args, cat):
 			print('\nInsert number from 1-5.\n')
 			return 0 
 
-	#checking k
 	try:
 		k=int(args[1])
 
@@ -80,7 +77,7 @@ def checkArgs(args, cat):
 
 def topKEvaluation(cat, k):
 
-	hashMap={} #ids and names only
+	hashMap={}
 	hashMap1={}
 	hashMap2={}
 	hashMap3={}
@@ -89,18 +86,18 @@ def topKEvaluation(cat, k):
 	upperBoundsDict={}
 	W=[]
 	u=5.0
-	t=0 #the k-st highest score in list Wk
+	t=0
 	canYield=0
-	numOfAccesses=0 #num of lines read from files
+	numOfAccesses=0 
 	firstRow=1	
 
 	with open(allStats, 'r', encoding='UTF-8') as df:
 		
-		row=df.readline() #to skip labels
+		row=df.readline()
 
 		for row in df:						
 			data=row.split(',') 
-			data[-1] = data[-1].strip() #remove 
+			data[-1] = data[-1].strip() 
 			name=data[1]
 			team=data[2]
 			trb=int(data[3])
@@ -117,11 +114,10 @@ def topKEvaluation(cat, k):
 		leftovers=5-numOfChoices
 		for i in range(leftovers):
 			cat.append(0)
-
 	
 	with open(optionFiles[cat[0]], 'r', encoding='UTF-8') as df1, open(optionFiles[cat[1]], 'r', encoding='UTF-8') as df2, open(optionFiles[cat[2]], 'r',encoding='UTF-8') as df3, open(optionFiles[cat[3]], 'r', encoding='UTF-8') as df4, open(optionFiles[cat[4]], 'r', encoding='UTF-8') as df5:
 		
-		if numOfChoices==1: #cat[0] 
+		if numOfChoices==1: 
 	
 			for row in df1:
 				data1=row.split(',')
@@ -129,7 +125,7 @@ def topKEvaluation(cat, k):
 				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), numOfAccesses]
 				numOfAccesses+=1
 
-		elif numOfChoices==2: #cat[0] cat[1]	
+		elif numOfChoices==2: 	
 
 			for row in zip(df1,df2):
 				data1,data2=fixData(row, numOfChoices)
@@ -155,14 +151,15 @@ def topKEvaluation(cat, k):
 				upperBoundsDict=R[4]
 				numOfAccesses=R[5]
 				canYield=R[6]
+
 				if canYield==1:
-					Wk=sorted(W, reverse=True, key=itemgetter(1))
-					W=Wk
+
 					for ks in W:
+
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
 
-		elif numOfChoices==3: #cat[0] cat[1] cat[2]
+		elif numOfChoices==3: 
 
 			for row in zip(df1,df2,df3):
 				data1,data2, data3=fixData(row, numOfChoices)
@@ -192,14 +189,14 @@ def topKEvaluation(cat, k):
 				upperBoundsDict=R[4]
 				numOfAccesses=R[5]
 				canYield=R[6]
+
 				if canYield==1:
-					Wk=sorted(W, reverse=True, key=itemgetter(1))
-					W=Wk
+
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
 
-		elif numOfChoices==4: #cat[0] cat[1] cat[2] cat[3]
+		elif numOfChoices==4: 
 
 			for row in zip(df1,df2,df3,df4):
 				data1,data2, data3, data4=fixData(row, numOfChoices)
@@ -231,14 +228,14 @@ def topKEvaluation(cat, k):
 				upperBoundsDict=R[4]
 				numOfAccesses=R[5]
 				canYield=R[6]
+
 				if canYield==1:
-					Wk=sorted(W, reverse=True, key=itemgetter(1))
-					W=Wk
+
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), numOfAccesses]
 
-		elif numOfChoices==5: #cat[0] cat[1] cat[2] cat[3] cat[4]
+		elif numOfChoices==5:
 
 			for row in zip(df1,df2,df3,df4,df5):
 				data1,data2, data3, data4, data5=fixData(row, numOfChoices)
@@ -273,41 +270,19 @@ def topKEvaluation(cat, k):
 				upperBoundsDict=R[4]
 				numOfAccesses=R[5]
 				canYield=R[6]
+
 				if canYield==1:
-					Wk=sorted(W, reverse=True, key=itemgetter(1))
-					W=Wk
+
 					for ks in W:
 						topKPlayer=hashMap.get(ks[0])
 						yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
 
-		Wk=sorted(W, reverse=True, key=itemgetter(1))
-		W=Wk
-		if numOfChoices==2:
-
-			for ks in W:
-				topKPlayer=hashMap.get(ks[0])
-				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), numOfAccesses]
-
-		elif numOfChoices==3:
-			for ks in W:
-				topKPlayer=hashMap.get(ks[0])
-				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), numOfAccesses]
-
-		elif numOfChoices==4:
-
-			for ks in W:
-				topKPlayer=hashMap.get(ks[0])
-				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), numOfAccesses]
-
-		elif numOfChoices==5:
-			for ks in W:
-				topKPlayer=hashMap.get(ks[0])
-				yield [str(topKPlayer[0]), int(topKPlayer[cat[0]+1]), int(topKPlayer[cat[1]+1]), int(topKPlayer[cat[2]+1]), int(topKPlayer[cat[3]+1]), int(topKPlayer[cat[4]+1]), numOfAccesses]
-
 
 
 def normalization(rowValue, maxv):
+	
 	return rowValue/maxv
+
 
 
 def fixData(row, numOfChoices):
@@ -399,13 +374,8 @@ def fixData(row, numOfChoices):
 		return [data1, data2, data3, data4, data5]
 
 
-def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
 
-	#growingPhase
-	#print('t: ', t)
-	#print('u: ', u)
-	#print('T: ', T)
-	print('W', W)
+def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
 
 	if t<u and T!=0:
 
@@ -418,17 +388,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				if i not in hashMapsList[1]:
 					f1Lb=hashMapsList[0].get(i)	
 					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
-					print('i %d not in hashMapsList: %f' % (i, f1Ub))		
+	
 				else:			
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
-					print('i %d in hashMapsList: %f' % (i, f1Ub))	
 				
 				upperBoundsDict.update({i:f1Ub})
 
 				if (f1Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -459,17 +430,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				if i not in hashMapsList[0]:
 					f2Lb=hashMapsList[1].get(i)	
 					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]	
-					print('i %d not in hashMapsList: %f' % (i, f2Ub))				
+					
 				elif i in hashMapsList[0]:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[0].get(i)
 					f2Ub=hashMapsList[1].get(i)+hashMapsList[0].get(i)	
-					print('i %d in hashMapsList: %f' % (i, f2Ub))
 
 				upperBoundsDict.update({i:f2Ub})	
 
 				if (f2Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -531,6 +503,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -577,6 +550,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -624,6 +598,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -697,6 +672,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -755,6 +731,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -813,6 +790,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -871,6 +849,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -979,8 +958,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				upperBoundsDict.update({i:f1Ub})
 
 				if (f1Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -1075,8 +1056,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				upperBoundsDict.update({i:f2Ub})
 
 				if (f2Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -1171,8 +1154,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				upperBoundsDict.update({i:f3Ub})
 
 				if (f3Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -1267,8 +1252,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				upperBoundsDict.update({i:f4Ub})
 
 				if (f4Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -1363,8 +1350,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				upperBoundsDict.update({i:f5Ub})
 
 				if (f5Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
+
 					for ks in W:
 						if ks[0]==i:
 							found=1
@@ -1401,36 +1390,46 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				pass
 
 #***************************************************************************************************
+
 		if t>=u:
+
 			return [W, t, u, T, upperBoundsDict, numOfAccesses ,1]
+
 		else:
+
 			return [W, t, u, T, upperBoundsDict, numOfAccesses, 0]
 
-	#shrinkingPhase
-	elif t>=u or T==0:
-		#print('upperBoundsDict:\n', upperBoundsDict)
-		return [W, t, u, T, upperBoundsDict, numOfAccesses ,1]
+#***************************************************************************************************
 
+	elif t>=u or T==0:
+
+		return [W, t, u, T, upperBoundsDict, numOfAccesses ,1]
 
 
 if __name__ == '__main__':
 	
-	inputs=getINput()
+	inputs=getInput()
 	chosenCategories=inputs[0]
 	k=inputs[1]
 	counter=0
+
 	with open('topks.csv', 'w', encoding='UTF-8') as rp1: 
 		csv_writer = csv.writer(rp1, delimiter=',')
+
 		for topks in topKEvaluation(chosenCategories, k):
+
 			if k==0:
+
 				print('No results. 0 num of numOfAccesses. Terminate.')
 				break
+
 			elif counter<k:
+
 				csv_writer.writerow(topks[:-1])
-				print(topks[:-1])
 				counter+=1
+
 			else:
+
 				accesses=['#ACCESSES', topks[-1]]
 				csv_writer.writerow(accesses)
-				print('numOfAccesses', topks[-1])
 				break
