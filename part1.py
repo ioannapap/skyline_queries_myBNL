@@ -414,7 +414,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 			numOfAccesses+=2
 
 			for i in hashMapsList[0]:
-				#updating all
+				
 				if i not in hashMapsList[1]:
 					f1Lb=hashMapsList[0].get(i)	
 					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]
@@ -424,7 +424,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 					print('i %d in hashMapsList: %f' % (i, f1Ub))	
 				
-				#upperBoundsDict[i]=f1Ub
 				upperBoundsDict.update({i:f1Ub})
 
 				if (f1Lb>t and len(W)==k) or len(W)<k:
@@ -451,9 +450,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					Wk=sorted(W, reverse=True, key=itemgetter(1))
 					W=Wk
-					t=W[-1][1]		
+					t=W[-1][1]	
 
-			print('----------------------------------------------------------')
+ 			#------------------------------------------------------------------
+
 			for i in hashMapsList[1]:
 				
 				if i not in hashMapsList[0]:
@@ -465,7 +465,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Ub=hashMapsList[1].get(i)+hashMapsList[0].get(i)	
 					print('i %d in hashMapsList: %f' % (i, f2Ub))
 
-				#upperBoundsDict[i]=f2Ub	
 				upperBoundsDict.update({i:f2Ub})	
 
 				if (f2Lb>t and len(W)==k) or len(W)<k:
@@ -500,12 +499,12 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
-			#print('upperBoundsDict 		:', upperBoundsDict)
 
 			try:
-				u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
+				u=next(iter(upperBoundsDict.values()))
 			except StopIteration:
 				pass
+
 
 		elif numOfChoices==3:
 
@@ -526,10 +525,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				#upperBoundsDict[i]=f1Ub
 				upperBoundsDict.update({i:f1Ub})
 
 				if (f1Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -543,12 +542,20 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 							break		
 						else:
 							pos+=1
-					if found==0:
+
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f1Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
-		
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f1Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
+
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[2]:
@@ -564,10 +571,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
-				#upperBoundsDict[i]=f2Ub
 				upperBoundsDict.update({i:f2Ub})
 				
 				if (f2Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -582,11 +589,19 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
+
 						W.insert(len(W), [i, f2Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]		
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f2Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]		
+
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[2]:
 
@@ -603,10 +618,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)	
 
-				#upperBoundsDict[i]=f3Ub
 				upperBoundsDict.update({i:f3Ub})
 
 				if (f3Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -621,12 +636,16 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f3Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
-				
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i. f3Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]			
 
 			for ks in W:
 				if ks[0] in upperBoundsDict:
@@ -639,6 +658,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 				u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
 			except StopIteration:
 				pass
+
 
 		elif numOfChoices==4:
 
@@ -671,10 +691,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				#upperBoundsDict[i]=f1Ub
 				upperBoundsDict.update({i:f1Ub})
 			
 				if (f1Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -689,13 +709,19 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f1Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
 
-			
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f1Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
+
 			for i in hashMapsList[1]:
 
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
@@ -723,10 +749,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				#upperBoundsDict[i]=f2Ub
 				upperBoundsDict.update({i:f2Ub})
 
 				if (f2Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -741,12 +767,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f2Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
 
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f2Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[2]:
 
@@ -775,10 +807,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				#upperBoundsDict[i]=f3Ub
 				upperBoundsDict.update({i:f3Ub})
 
 				if (f3Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -793,12 +825,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f3Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f3Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
 			
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[3]:
 
@@ -827,10 +865,10 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				#upperBoundsDict[i]=f4Ub
 				upperBoundsDict.update({i:f4Ub})
 
 				if (f4Lb>t and len(W)==k) or len(W)<k:
+
 					found=0
 					pos=0
 					for ks in W:
@@ -845,11 +883,16 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f4Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f4Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
 
 			for ks in W:
 				if ks[0] in upperBoundsDict:
@@ -933,7 +976,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				#upperBoundsDict[i]=f1Ub
 				upperBoundsDict.update({i:f1Ub})
 
 				if (f1Lb>t and len(W)==k) or len(W)<k:
@@ -951,12 +993,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f1Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
 
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f1Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[1]:
 
@@ -1024,7 +1072,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				#upperBoundsDict[i]=f2Ub
 				upperBoundsDict.update({i:f2Ub})
 
 				if (f2Lb>t and len(W)==k) or len(W)<k:
@@ -1042,12 +1089,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f2Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
 
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f2Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[2]:
 
@@ -1115,7 +1168,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				#upperBoundsDict[i]=f3Ub
 				upperBoundsDict.update({i:f3Ub})
 
 				if (f3Lb>t and len(W)==k) or len(W)<k:
@@ -1133,11 +1185,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f3Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f3Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[3]:
 
@@ -1205,7 +1264,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				#upperBoundsDict[i]=f4Ub
 				upperBoundsDict.update({i:f4Ub})
 
 				if (f4Lb>t and len(W)==k) or len(W)<k:
@@ -1223,12 +1281,18 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f4Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
 
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f4Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
+
+			#------------------------------------------------------------------		
 
 			for i in hashMapsList[4]:
 
@@ -1296,7 +1360,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				#upperBoundsDict[i]=f5Ub
 				upperBoundsDict.update({i:f5Ub})
 
 				if (f5Lb>t and len(W)==k) or len(W)<k:
@@ -1314,11 +1377,16 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f5Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f5Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
 
 			for ks in W:
 				if ks[0] in upperBoundsDict:
@@ -1332,8 +1400,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 			except StopIteration:
 				pass
 
-		#out of cases now
-		#******************************************************************************check now
+#***************************************************************************************************
 		if t>=u:
 			return [W, t, u, T, upperBoundsDict, numOfAccesses ,1]
 		else:
