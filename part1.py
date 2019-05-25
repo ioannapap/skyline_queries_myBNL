@@ -641,7 +641,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 
 					elif found==0 and len(W)==k:
 						W.pop(-1)
-						W.insert(len(W), [i. f3Lb])
+						W.insert(len(W), [i, f3Lb])
 
 					Wk=sorted(W, reverse=True, key=itemgetter(1))
 					W=Wk
@@ -1430,7 +1430,7 @@ if __name__ == '__main__':
 				print(topks[:-1])
 				counter+=1
 			else:
-				accesses=['NUMBER OF ACCESSES', topks[-1]]
+				accesses=['#ACCESSES', topks[-1]]
 				csv_writer.writerow(accesses)
 				print('numOfAccesses', topks[-1])
 				break
