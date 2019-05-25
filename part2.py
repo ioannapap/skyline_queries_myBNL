@@ -8,7 +8,6 @@ blockStats='2017_BLK.csv'
 reboundStats='2017_TRB.csv'
 
 
-
 def getINput():
 
 	chosenCategories=[]
@@ -27,10 +26,7 @@ def getINput():
 	return chosenCategories
 
 
-
 def checkArgs(args, cat):
-
-	#checking chosenCategories
 
 	for i in args:
 
@@ -73,17 +69,16 @@ def myBNL(cat):
 		for row in df:	
 
 			data=row.split(',') 
-			data[-1] = data[-1].strip() #remove 
-			iD=data[0] #name=data[1], tm=data[2], trb=data[3], ast=data[4], stl=data[5], blk=data[6], pts=data[7]
+			data[-1] = data[-1].strip() 
+			iD=data[0]
 			delList=[]
 			needToInsert=0
-			pl=0
 
 
-			if numOfChoices==1:   #cat[0]
+			if numOfChoices==1:  
 
 				if firstTime==1:
-					slHashMap.update({iD : [data[1], int(data[cat[0]+2])]}) #+2 due to name and tm column
+					slHashMap.update({iD : [data[1], int(data[cat[0]+2])]}) 
 					firstTime=0
 
 				for idd in slHashMap:
@@ -105,7 +100,7 @@ def myBNL(cat):
 
 
 
-			elif numOfChoices==2:  #cat[0] cat[1]
+			elif numOfChoices==2:  
 
 				if firstTime==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2])]}) 
@@ -121,26 +116,18 @@ def myBNL(cat):
 					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1):
 						delList.insert(len(delList), idd)
 						needToInsert=1
-					elif int(data[cat[0]+2])>val1 or int(data[cat[1]+2])>val2 :
-						pl+=1
-
-					
 				
-				#**********************		
+						
 				for idss in delList:
 					del slHashMap[idss]
-
-				if len(slHashMap)==pl:
-					needToInsert=1
 					
 				if needToInsert==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2])]})
 					needToInsert=0
-				#**********************
+				
 
 
-
-			elif numOfChoices==3:  #cat[0] cat[1] cat[2]
+			elif numOfChoices==3:  
 
 				if firstTime==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2])]}) 
@@ -158,24 +145,18 @@ def myBNL(cat):
 					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1 and int(data[cat[2]+2])>=val3) or (int(data[cat[2]+2])>val3 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2):
 						delList.insert(len(delList), idd)
 						needToInsert=1
-					elif int(data[cat[0]+2])>val1 or int(data[cat[1]+2])>val2 or int(data[cat[2]+2])>val3:
-						pl+=1
 				
-				#**********************		
+					
 				for idss in delList:
 					del slHashMap[idss]
-				
-				if len(slHashMap)==pl:
-					needToInsert=1
-
+					
 				if needToInsert==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2])]})
 					needToInsert=0
-				#**********************
-
+				
 
 		
-			elif numOfChoices==4:  #cat[0] cat[1] cat[2] cat[3]
+			elif numOfChoices==4: 
 
 				if firstTime==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2])]}) 
@@ -195,25 +176,18 @@ def myBNL(cat):
 					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4) or (int(data[cat[2]+2])>val3 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[3]+2])>=val4) or (int(data[cat[3]+2])>val4 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3):
 						delList.insert(len(delList), idd)
 						needToInsert=1
-					elif int(data[cat[0]+2])>val1 or int(data[cat[1]+2])>val2 or int(data[cat[2]+2])>val3 or int(data[cat[3]+2])>val4:
-						pl+=1
 				
-				
-				#**********************		
+					
 				for idss in delList:
 					del slHashMap[idss]
-
-				if len(slHashMap)==pl:
-					needToInsert=1
-
+					
 				if needToInsert==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2])]})
 					needToInsert=0
-				#**********************
+				
 
 	
-
-			elif numOfChoices==5:  #cat[0] cat[1] cat[2] cat[3] cat[4]
+			elif numOfChoices==5:  
 
 				if firstTime==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2]), int(data[cat[4]+2])]}) 
@@ -235,26 +209,19 @@ def myBNL(cat):
 					if (int(data[cat[0]+2])>val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4 and int(data[cat[4]+2])>=val5) or (int(data[cat[1]+2])>val2 and int(data[cat[0]+2])>=val1 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4 and int(data[cat[4]+2])>=val5) or (int(data[cat[2]+2])>val3 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[3]+2])>=val4 and int(data[cat[4]+2])>=val5) or (int(data[cat[3]+2])>val4 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[4]+2])>=val5) or (int(data[cat[4]+2])>val5 and int(data[cat[0]+2])>=val1 and int(data[cat[1]+2])>=val2 and int(data[cat[2]+2])>=val3 and int(data[cat[3]+2])>=val4):
 						delList.insert(len(delList), idd)
 						needToInsert=1
-					elif int(data[cat[0]+2])>val1 or int(data[cat[1]+2])>val2 or int(data[cat[2]+2])>val3 or int(data[cat[3]+2])>val4 or int(data[cat[4]+2])>val5:
-						pl+=1
-								
-				#**********************		
+				
+						
 				for idss in delList:
 					del slHashMap[idss]
-			
-				if len(slHashMap)==pl:
-					needToInsert=1		
-								
+					
 				if needToInsert==1:
 					slHashMap.update({iD : [data[1], int(data[cat[0]+2]), int(data[cat[1]+2]), int(data[cat[2]+2]), int(data[cat[3]+2]), int(data[cat[4]+2])]})
 					needToInsert=0
-				#**********************
+				
 	
 
 		sk=list(slHashMap.values())
 		return sk
-
-
 
 
 if __name__ == '__main__':
@@ -266,11 +233,4 @@ if __name__ == '__main__':
 		
 		csv_writer = csv.writer(rp2, delimiter=',')
 		for s in skyline:
-			print('skyline: ', s)
 			csv_writer.writerow(s)
-
-
-
-
-
-
