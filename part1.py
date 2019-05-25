@@ -402,9 +402,10 @@ def fixData(row, numOfChoices):
 def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBoundsDict, numOfChoices, numOfAccesses, k):
 
 	#growingPhase
-	print('t: ', t)
-	print('u: ', u)
-	print('T: ', T)
+	#print('t: ', t)
+	#print('u: ', u)
+	#print('T: ', T)
+	print('W', W)
 
 	if t<u and T!=0:
 
@@ -441,11 +442,17 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
+						W.insert(len(W), [i, f1Lb])		
+					
+					elif found==0 and len(W)==k:
+						W.pop(-1)
 						W.insert(len(W), [i, f1Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]				
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]		
+
 			print('----------------------------------------------------------')
 			for i in hashMapsList[1]:
 				
@@ -476,11 +483,16 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						else:
 							pos+=1
 	
-					if found==0:
+					if found==0 and len(W)<k:
 						W.insert(len(W), [i, f2Lb])
-						Wk=sorted(W, reverse=True, key=itemgetter(1))
-						W=Wk
-						t=W[-1][1]
+
+					elif found==0 and len(W)==k:
+						W.pop(-1)
+						W.insert(len(W), [i, f2Lb])
+
+					Wk=sorted(W, reverse=True, key=itemgetter(1))
+					W=Wk
+					t=W[-1][1]
 
 			for ks in W:
 				if ks[0] in upperBoundsDict:
@@ -1325,7 +1337,6 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 		if t>=u:
 			return [W, t, u, T, upperBoundsDict, numOfAccesses ,1]
 		else:
-			print('upperBoundsDict:\n', upperBoundsDict)
 			return [W, t, u, T, upperBoundsDict, numOfAccesses, 0]
 
 	#shrinkingPhase
