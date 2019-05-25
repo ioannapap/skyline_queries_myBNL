@@ -131,7 +131,6 @@ def topKEvaluation(cat, k):
 		elif numOfChoices==2: #cat[0] cat[1]	
 
 			for row in zip(df1,df2):
-				print(row)
 				data1,data2=fixData(row, numOfChoices)
 	
 				if firstRow==1:
@@ -139,10 +138,8 @@ def topKEvaluation(cat, k):
 					maxv2=data2[1]
 					firstRow=0
 
-				performance1=int(data1[1])
-				performance2=int(data2[1])
-				#performance1=normalization(int(data1[1]), maxv1) 
-				#performance2=normalization(int(data2[1]), maxv2) 
+				performance1=normalization(int(data1[1]), maxv1) 
+				performance2=normalization(int(data2[1]), maxv2) 
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})	
 				T=performance1+performance2
@@ -176,13 +173,9 @@ def topKEvaluation(cat, k):
 					firstRow=0
 
 
-				performance1=int(data1[1])
-				performance2=int(data2[1])
-				performance3=int(data3[1])
-				
-				#performance1=normalization(int(data1[1]), maxv1)
-				#performance2=normalization(int(data2[1]), maxv2) 
-				#performance3=normalization(int(data3[1]), maxv3)
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				performance3=normalization(int(data3[1]), maxv3)
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})
@@ -217,15 +210,10 @@ def topKEvaluation(cat, k):
 					maxv4=data4[1]
 					firstRow=0
 
-
-				performance1=int(data1[1])
-				performance2=int(data2[1])
-				performance3=int(data3[1])
-				performance4=int(data4[1])
-				#performance1=normalization(int(data1[1]), maxv1)
-				#performance2=normalization(int(data2[1]), maxv2) 
-				#performance3=normalization(int(data3[1]), maxv3)	
-				#performance4=normalization(int(data4[1]), maxv4)
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				performance3=normalization(int(data3[1]), maxv3)	
+				performance4=normalization(int(data4[1]), maxv4)
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})				
@@ -262,16 +250,11 @@ def topKEvaluation(cat, k):
 					maxv5=data5[1]
 					firstRow=0
 
-				performance1=int(data1[1])
-				performance2=int(data2[1])
-				performance3=int(data3[1])
-				performance4=int(data4[1])
-				performance5=int(data5[1])
-				#performance1=normalization(int(data1[1]), maxv1)
-				#performance2=normalization(int(data2[1]), maxv2) 
-				#performance3=normalization(int(data3[1]), maxv3)	
-				#performance4=normalization(int(data4[1]), maxv4)
-				#performance5=normalization(int(data5[1]), maxv5)
+				performance1=normalization(int(data1[1]), maxv1)
+				performance2=normalization(int(data2[1]), maxv2) 
+				performance3=normalization(int(data3[1]), maxv3)	
+				performance4=normalization(int(data4[1]), maxv4)
+				performance5=normalization(int(data5[1]), maxv5)
 				hashMap1.update({int(data1[0]): performance1})
 				hashMap2.update({int(data2[0]): performance2})
 				hashMap3.update({int(data3[0]): performance3})				
@@ -361,7 +344,6 @@ def fixData(row, numOfChoices):
 
 		return [data1, data2, data3]
 
-
 	elif numOfChoices==4:
 
 		data1=list(row[:1])
@@ -384,9 +366,7 @@ def fixData(row, numOfChoices):
 		data4=data4[0].split(',')
 		data4=[int(l) for l in data4]
 
-
 		return [data1, data2, data3, data4]
-
 
 	elif numOfChoices==5:
 
@@ -423,13 +403,14 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 	#growingPhase
 	#print('t: ', t)
 	#print('T: ', T)
-	if len(W)<k or t<u:
+	if t<u:
 
 		if numOfChoices==2:
 
 			numOfAccesses+=2
 
 			for i in hashMapsList[0]:
+
 				if i not in hashMapsList[1]:
 					f1Lb=hashMapsList[0].get(i)	
 					f1Ub=hashMapsList[0].get(i)+currentPerformances[1]		
@@ -437,7 +418,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)
 				
-				if f1Lb>t:
+				if (f1Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -453,26 +434,17 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 							pos+=1
 	
 					if found==0:
-						W.insert(0, [i, f1Lb])
+						W.insert(len(W), [i, f1Lb])
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
 
-					if i in upperBoundsDict:
-						del upperBoundsDict[i]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							print('found ks in W', ks[0])
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f1Ub
+				upperBoundsDict[i]=f1Ub
 				
 
 			for i in hashMapsList[1]:
+
 				if i not in hashMapsList[0]:
 					f2Lb=hashMapsList[1].get(i)	
 					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]				
@@ -480,7 +452,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[0].get(i)
 					f2Ub=hashMapsList[1].get(i)+hashMapsList[0].get(i)			
 
-				if f2Lb>t:
+				if (f2Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -504,27 +476,21 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					if i in upperBoundsDict:
 						del upperBoundsDict[i]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							print('found ks in W', ks[0])
-							break
-					if found==0:
-						upperBoundsDict[i]=f2Ub
+					#if found==0:
+				upperBoundsDict[i]=f2Ub
+
+			for ks in W:
+				if ks[0] in upperBoundsDict:
+					del upperBoundsDict[ks[0]]
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
+
 			try:
 				u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
 			except StopIteration:
 				print('StopIteration')
 
-			print('upperBoundsDict:', upperBoundsDict)
-			print('u:', u)
-			print('W:', W)
-	
 		elif numOfChoices==3:
 
 			numOfAccesses+=3
@@ -544,8 +510,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 
 				
-
-				if f1Lb>t:
+				if (f1Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -565,14 +530,8 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f1Ub
+					#if found==0:
+				upperBoundsDict[i]=f1Ub
 
 			for i in hashMapsList[1]:
 				if i not in hashMapsList[0] and i not in hashMapsList[2]:
@@ -588,7 +547,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 				
-				if f2Lb>t:
+				if (f2Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -609,14 +568,8 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f2Ub
+
+				upperBoundsDict[i]=f2Ub
 
 			for i in hashMapsList[2]:
 				if i not in hashMapsList[0] and i not in hashMapsList[1]:
@@ -632,7 +585,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)	
 
-				if f3Lb>t:
+				if (f3Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -653,17 +606,16 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f3Ub
+					#if found==0:
+				upperBoundsDict[i]=f3Ub
+
+			for ks in W:
+				if ks[0] in upperBoundsDict:
+					del upperBoundsDict[ks[0]]
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
+
 			try:
 				u=next(iter(upperBoundsDict.values())) #the max upper bound not in W
 			except StopIteration:
@@ -703,7 +655,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 			
-				if f1Lb>t:
+				if (f1Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -724,14 +676,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f1Ub
+				upperBoundsDict[i]=f1Ub
 
 			for i in hashMapsList[1]:
 				if i not in hashMapsList[0] and i not in hashMapsList[2] and i not in hashMapsList[3]:
@@ -759,7 +704,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				if f2Lb>t:
+				if (f2Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -780,14 +725,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f2Ub
+				upperBoundsDict[i]=f2Ub
 
 
 			for i in hashMapsList[2]:
@@ -816,7 +754,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				if f3Lb>t:
+				if (f3Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -836,14 +774,8 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f3Ub
+
+				upperBoundsDict[i]=f3Ub
 
 			for i in hashMapsList[3]:
 				if i not in hashMapsList[0] and i not in hashMapsList[1] and i not in hashMapsList[2]:
@@ -871,7 +803,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f4Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)
 
-				if f4Lb>t:
+				if (f4Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -891,17 +823,17 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f4Ub
+				
+
+				upperBoundsDict[i]=f4Ub
+
+			for ks in W:
+				if ks[0] in upperBoundsDict:
+					del upperBoundsDict[ks[0]]
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
+
 			try:
 				u=next(iter(upperBoundsDict.values())) 
 			except StopIteration:
@@ -977,7 +909,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f1Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f1Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				if f1Lb>t:
+				if (f1Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -997,14 +929,9 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f1Ub
+
+
+				upperBoundsDict[i]=f1Ub
 
 
 			for i in hashMapsList[1]:
@@ -1075,7 +1002,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
 
-				if f2Lb>t:
+				if (f2Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -1095,14 +1022,9 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f2Ub
+
+
+				upperBoundsDict[i]=f2Ub
 
 			for i in hashMapsList[2]:
 
@@ -1170,7 +1092,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f3Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f3Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				if f3Lb>t:
+				if (f3Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -1191,14 +1113,8 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f3Ub
+
+				upperBoundsDict[i]=f3Ub
 
 			for i in hashMapsList[3]:
 
@@ -1268,7 +1184,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f4Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
 
-				if f4Lb>t:
+				if (f4Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -1289,14 +1205,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						W=Wk
 						t=W[-1][1]
 
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f4Ub
+				upperBoundsDict[i]=f4Ub
 
 			for i in hashMapsList[4]:
 
@@ -1365,7 +1274,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f5Lb=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 					f5Ub=hashMapsList[0].get(i)+hashMapsList[1].get(i)+hashMapsList[2].get(i)+hashMapsList[3].get(i)+hashMapsList[4].get(i)
 
-				if f5Lb>t:
+				if (f5Lb>t and len(W)==k) or len(W)<k:
 					found=0
 					pos=0
 					for ks in W:
@@ -1385,38 +1294,29 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 						Wk=sorted(W, reverse=True, key=itemgetter(1))
 						W=Wk
 						t=W[-1][1]
-				else:
-					for ks in W:
-						found=0
-						if ks[0]==i:
-							found=1
-							break
-					if found==0:
-						upperBoundsDict[i]=f5Ub
+
+
+				upperBoundsDict[i]=f5Ub
+
+			for ks in W:
+				if ks[0] in upperBoundsDict:
+					del upperBoundsDict[ks[0]]
 
 			upperBoundsDictK=sorted(upperBoundsDict.items(), reverse=True, key=lambda kv: kv[1])
 			upperBoundsDict=dict(upperBoundsDictK)
+		
 			try:
 				u=next(iter(upperBoundsDict.values())) 
 			except StopIteration:
 				print('StopIteration')
 
-
+		#out of cases now
 		#******************************************************************************check now
 
-		if t<u or t<T:
-			return [W, t, u, T, upperBoundsDict, numOfAccesses, 0]
-		else:
-
-			for ids,val in upperBoundsDict.items():
-				if len(W)<k:
-					#we dont care that it enters with val because we print data by key through ALL file
-					W.insert(len(W), [ids, val])
-
-			return [W, t, u, T, upperBoundsDict, numOfAccesses, 1]
+		return [W, t, u, T, upperBoundsDict, numOfAccesses, 0]
 
 	#shrinkingPhase
-	else:
+	elif t>=u:
 
 		return [W, t, u, T, upperBoundsDict, numOfAccesses ,1]
 
