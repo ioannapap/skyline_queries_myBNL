@@ -431,7 +431,7 @@ def myNRA(currentIds, currentPerformances, hashMapsList, t, u, T, W, upperBounds
 					f2Lb=hashMapsList[1].get(i)	
 					f2Ub=hashMapsList[1].get(i)+currentPerformances[0]	
 					
-				elif i in hashMapsList[0]:
+				else:
 					f2Lb=hashMapsList[1].get(i)+hashMapsList[0].get(i)
 					f2Ub=hashMapsList[1].get(i)+hashMapsList[0].get(i)	
 
