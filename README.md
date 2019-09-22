@@ -1,2 +1,2 @@
-# ComplexDataManagement_Skyline-TopK_Queries
+# ComplexDataManagement_Skyline Queries
 Skyline Queries based on NBA datasets
